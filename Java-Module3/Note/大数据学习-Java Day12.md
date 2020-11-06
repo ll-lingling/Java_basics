@@ -160,9 +160,27 @@ public class StringBuilderTest {
 
 - 常用方法
 
-  - ```java
-     static long currentTimeMillis()   //返回当前时间与1970年1月1日0时0分0秒之间以毫秒为单位的时间差
-    ```
+  | 方法声明                        | 功能介绍                                                     |
+  | ------------------------------- | ------------------------------------------------------------ |
+  | static long currentTimeMillis() | 返回当前时间与1970年1月1日0时0分0秒之间以毫秒为单位的时 间差 |
+  
+  ```java
+  
+  public class SystemTest {
+  
+      public static void main(String[] args) {
+  
+          // 1.获取当前系统时间距离1970年1月1日0时0分0秒的毫秒数
+          long msec = System.currentTimeMillis();
+          System.out.println("当前系统时间距离1970年1月1日0时0分0秒已经过去" + msec + "毫秒了！");
+  
+          // 通常用于测试某一段代码的执行效率
+      }
+  }
+  
+  ```
+  
+  
 
 ### 2.2   Date类的概述 
 
@@ -178,6 +196,38 @@ public class StringBuilderTest {
   | Date(long date)         | 根据参数指定毫秒数构造对象， 参数为距离1970年1月1日0时0分0秒 的毫秒数 |
   | long getTime()          | 获取调用对象距离1970年1月1日0时0分0秒的毫秒数                |
   | void setTime(long time) | 设置调用对象为距离基准时间time毫秒的时间点                   |
+  
+  ```java
+  
+  import java.util.Date;
+  
+  public class DateTest {
+  
+      public static void main(String[] args) {
+  
+          // 1.使用无参方式构造Date对象并打印
+          Date d1 = new Date();
+          System.out.println("d1 = " + d1); // 获取当前系统时间
+  
+          System.out.println("------------------------------------");
+          // 2.使用参数指定的毫秒数来构造Date对象并打印  1秒 = 1000毫秒  东八区
+          Date d2 = new Date(1000);
+          System.out.println("d2 = " + d2); // 1970 1 1 8 0 1
+  
+          System.out.println("------------------------------------");
+          // 3.获取调用对象距离1970年1月1日0时0分0秒的毫秒数
+          long msec = d2.getTime();
+          System.out.println("获取到的毫秒数是：" + msec); // 1000
+  
+          // 4.设置调用对象所表示的时间点为参数指定的毫秒数
+          d2.setTime(2000);
+          System.out.println("修改后的时间是：" + d2); // 1970 1 1 8 0 2
+      }
+  }
+  
+  ```
+  
+  
 
 ### 2.3   SimpleDateFormat类的概述 
 
@@ -194,6 +244,33 @@ public class StringBuilderTest {
   | final String format(Date date)   | 用于将日期类型转换为文本类型                                 |
   | Date parse(String source)        | 用于将文本类型转换为日期类型                                 |
 
+  ```java
+  
+  import java.text.SimpleDateFormat;
+  import java.util.Date;
+  
+  public class SimpleDateFormatTest {
+  
+      public static void main(String[] args) throws Exception {
+  
+          // 1.获取当前系统时间并打印
+          Date d1 = new Date();
+          System.out.println("d1 = " + d1);
+  
+          // 2.构造SimpleDateFormat类型的对象并指定格式
+          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+          // 3.实现日期类型向文本类型的转换并打印
+          // alt+Enter 可以实现返回值的生成
+          String format = sdf.format(d1);
+          System.out.println("转换后的日期为：" + format);
+          // 4.实现文本类型到日期类型的转换并打印
+          Date parse = sdf.parse(format);
+          System.out.println("转回日期格式的结果为：" + parse);
+      }
+  }
+  
+  ```
+  
   
 
 ### 2.4  Calendar类的概述 
@@ -212,6 +289,8 @@ public class StringBuilderTest {
   | Date getTime()                                               | 用于将Calendar类型转换为 Date类型 |
   | void set(int field, int value)                               | 设置指定字段的数值                |
   | void add(int field, int amount)                              | 向指定字段增加数值                |
+
+  
 
 - 多态的使用场合
 
@@ -238,6 +317,54 @@ public class StringBuilderTest {
      }
     
     ```
+
+```java
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+public class CalendarTest {
+
+    public static void main(String[] args) {
+
+        // 1.使用过时的方法按照指定的年月日时间分来构造对象
+        Date d1 = new Date(2008-1900, 8-1, 8, 20, 8, 8);
+        // 2.设置日期对象的格式并打印
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String format = sdf.format(d1);
+        System.out.println("获取到的时间是：" + format); // 2008 8 8 20 8 8
+
+        System.out.println("-----------------------------------------------------");
+        // 2.使用取代的方式按照指定的年月日时分秒来构造对象
+        // 2.1 获取Calendar类型的引用
+        // 考点：既然Calendar是个抽象类不能创建对象，那么下面的方法为啥可以获取Calendar类型的引用呢？
+        // 解析：由源码可知，返回的并不是Calendar类型的对象，而是Calendar类的子类GregorianCalendar等对象，形成了多态
+        // 多态的使用场合之三
+        Calendar instance = Calendar.getInstance();
+        // 2.2 设置指定的年月日时分秒信息
+        instance.set(2008, 8-1, 8, 20, 8, 8);
+        // 2.3 转换为Date类型的对象
+        Date d2 = instance.getTime();
+        String format1 = sdf.format(d2);
+        System.out.println("获取到的时间是：" + format1); // 2008 8 8 20 8 8
+
+        System.out.println("-----------------------------------------------------");
+        // 3.向指定的字段设置以及增加指定的数值
+        instance.set(Calendar.YEAR, 2018);
+        // 转换为Date类型并按照指定的格式打印
+        Date d3 = instance.getTime();
+        System.out.println("设置年份后的结果是：" + sdf.format(d3)); // 2018 8 8 20 8 8
+
+        instance.add(Calendar.MONTH, 2);
+        Date d4 = instance.getTime();
+        System.out.println("增加月份后的结果是：" + sdf.format(d4)); // 2018 10 8 20 8 8
+    }
+}
+
+```
+
+
 
 ## 3   Java8中的日期相关类 
 
@@ -315,6 +442,70 @@ public class StringBuilderTest {
 | LocalDateTime minusMinutes(long minutes)                     | 减去参数指定的分                              |
 | LocalDateTime minusSeconds(long seconds)                     | 减去参数指定的秒                              |
 
+```java
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+public class LocalDateTimeTest {
+
+    public static void main(String[] args) {
+
+        // 1.获取当前日期信息并打印
+        LocalDate now = LocalDate.now();
+        System.out.println("获取到的当前日期是：" + now);
+        // 2.获取当前时间信息并打印
+        LocalTime now1 = LocalTime.now();
+        System.out.println("获取到的当前时间是：" + now1);
+        // 3.获取当前日期时间信息并打印，使用最多
+        LocalDateTime now2 = LocalDateTime.now();
+        System.out.println("获取到的当前日期时间是：" + now2);
+
+        System.out.println("-------------------------------------------------------");
+        // 4.使用参数指定的年月日时分秒信息来获取对象并打印
+        // 使用ctrl+F12来查找指定的方法
+        LocalDateTime of = LocalDateTime.of(2008, 8, 8, 20, 8, 8);
+        System.out.println("指定的日期时间是：" + of); // 自动调用toString方法
+        System.out.println("获取到的年是：" + of.getYear()); // 2008
+        System.out.println("获取到的月是：" + of.getMonthValue()); // 8
+        System.out.println("获取到的日是：" + of.getDayOfMonth()); // 8
+        System.out.println("获取到的时是：" + of.getHour()); // 20
+        System.out.println("获取到的分是：" + of.getMinute()); // 8
+        System.out.println("获取到的秒是：" + of.getSecond()); // 8
+
+        System.out.println("-------------------------------------------------------");
+        // 5.实现特征的设置并打印
+        // 与String类型相似，调用对象本身的数据内容不会改变，返回值相当于创建了一个新的对象，由此证明了不可变性
+        LocalDateTime localDateTime = of.withYear(2012);
+        System.out.println("localDateTime = " + localDateTime); // 2012-08-08T20:08:08
+        System.out.println("of = " + of); // 2008-08-08T20:08:08
+        LocalDateTime localDateTime1 = localDateTime.withMonth(12);
+        System.out.println("localDateTime1 = " + localDateTime1); // 2012 12 8 20 8 8
+
+        System.out.println("-------------------------------------------------------");
+        // 6.实现特征的增加并打印
+        LocalDateTime localDateTime2 = localDateTime1.plusDays(2);
+        System.out.println("localDateTime2 = " + localDateTime2); // 2012 12 10 20 8 8
+        System.out.println("localDateTime1 = " + localDateTime1); // 2012 12 8 20 8 8
+        LocalDateTime localDateTime3 = localDateTime2.plusHours(3);
+        System.out.println("localDateTime3 = " + localDateTime3); // 2012 12 10 23 8 8
+
+        System.out.println("-------------------------------------------------------");
+        // 7.实现特征的减少并打印
+        LocalDateTime localDateTime4 = localDateTime3.minusMinutes(1);
+        System.out.println("localDateTime4 = " + localDateTime4); // 2012 12 10 23 7 8
+        System.out.println("localDateTime3 = " + localDateTime3); // 2012 12 10 23 8 8
+        LocalDateTime localDateTime5 = localDateTime4.minusSeconds(3);
+        System.out.println("localDateTime5 = " + localDateTime5); // 2012 12 10 23 7 5
+
+    }
+}
+
+```
+
+
+
 ### 3.6   Instant类的概述 
 
 - 基本 概念
@@ -330,7 +521,38 @@ public class StringBuilderTest {
   | static Instant ofEpochMilli(long epochMilli) | 根据参数指定的毫秒数来构造对象，参数为距离1970年1月1 日0时0分0秒的毫秒数 |
   | long toEpochMilli()                          | 获取距离1970年1月1日0时0分0秒的毫秒数                        |
 
-  
+```java
+
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+
+public class InstantTest {
+
+    public static void main(String[] args) {
+
+        // 1.使用Instant类来获取当前系统时间  并不是当前系统的默认时区  本初子午线   差8小时  东八区
+        Instant now = Instant.now();
+        System.out.println("获取到的当前时间为：" + now);
+
+        // 2.加上时区所差的8个小时
+        OffsetDateTime offsetDateTime = now.atOffset(ZoneOffset.ofHours(8));
+        System.out.println("偏移后的日期时间为：" + offsetDateTime);
+
+        System.out.println("--------------------------------------------------------");
+        // 3.获取当前调用对象距离标准基准时间的毫秒数
+        long g1 = now.toEpochMilli();
+        System.out.println("获取到的毫秒差为：" + g1);
+
+        // 4.根据参数指定的毫秒数来构造对象
+        Instant instant = Instant.ofEpochMilli(g1);
+        System.out.println("根据参数指定的毫秒数构造出来的对象为：" + instant);
+    }
+}
+
+```
+
+
 
 ### 3.7   DateTimeFormatter类的概述 
 
@@ -343,4 +565,31 @@ public class StringBuilderTest {
 | static DateTimeFormatter ofPattern(String pattern) | 根据参数指定的模式来获取对象   |
 | String format(TemporalAccessor temporal)           | 将参数指定日期时间转换为字符串 |
 | TemporalAccessor parse(CharSequence text)          | 将参数指定字符串转换为日期时间 |
+
+```java
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+
+public class DateTimeFormatterTest {
+
+    public static void main(String[] args) {
+
+        // 1.获取当前系统的日期时间并打印
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println("now = " + now);
+
+        // 2.按照指定的格式准备一个DateTimeFormatter类型的对象
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        // 3.实现日期时间向字符串类型的转换并打印
+        String str = dateTimeFormatter.format(now);
+        System.out.println("调整格式后的结果是：" + str);
+        // 4.实现字符串类型到日期时间类型的转换并打印
+        TemporalAccessor parse = dateTimeFormatter.parse(str);
+        System.out.println("转回去的结果是：" + parse);
+    }
+}
+
+```
 
