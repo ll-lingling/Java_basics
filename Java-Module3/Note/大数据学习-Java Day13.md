@@ -17,7 +17,7 @@
 
 ### 2  Collection集合（重点）
 
- ![Snipaste_2020-11-08_16-56-51](.\picture\Snipaste_2020-11-08_16-56-51.png)
+![./picture/Snipaste_2020-11-14_12-20-34.png](./picture/Snipaste_2020-11-14_12-20-34.png)
 
 - 概念
 
@@ -459,9 +459,9 @@ public class CollectionPrintTest {
       }
       
       ```
-  
+    
       
-  
+    
   - 其中Stack类的底层是采用动态数组进行数据管理的，该类主要用于描述一种具有后进先出特征的 数据结构，叫做栈(last in first out LIFO)。 
   
   - 其中Vector类的底层是采用动态数组进行数据管理的，该类与ArrayList类相比属于线程安全的 类，效率比较低，以后开发中基本不用。  
