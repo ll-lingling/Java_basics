@@ -923,16 +923,132 @@ public class ThreadCommunicateTest implements Runnable {
 
 
 
+![](./picture/01 生产者消费者模型.png)
+
+```java
+
+/**
+ * 编程实现仓库类
+ */
+public class StoreHouse {
+    private int cnt = 0; // 用于记录产品的数量
+
+    public synchronized void produceProduct() {
+        notify();
+        if (cnt < 10) {
+            System.out.println("线程" + Thread.currentThread().getName() + "正在生产第" + (cnt+1) + "个产品...");
+            cnt++;
+        } else {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public synchronized void consumerProduct() {
+        notify();
+        if (cnt > 0) {
+            System.out.println("线程" + Thread.currentThread().getName() + "消费第" + cnt + "个产品");
+            cnt--;
+        } else {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+```
+
+```java
+
+/**
+ * 编程实现生产者线程，不断地生产产品
+ */
+public class ProduceThread extends Thread {
+    // 声明一个仓库类型的引用作为成员变量，是为了能调用调用仓库类中的生产方法   合成复用原则
+    private StoreHouse storeHouse;
+    // 为了确保两个线程共用同一个仓库
+    public ProduceThread(StoreHouse storeHouse) {
+        this.storeHouse = storeHouse;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            storeHouse.produceProduct();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+```
+
+```java
+
+public class ConsumerThread extends Thread {
+    // 声明一个仓库类型的引用作为成员变量，是为了能调用调用仓库类中的生产方法   合成复用原则
+    private StoreHouse storeHouse;
+    // 为了确保两个线程共用同一个仓库
+    public ConsumerThread(StoreHouse storeHouse) {
+        this.storeHouse = storeHouse;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            storeHouse.consumerProduct();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+```
+
+```java
+
+public class StoreHouseTest {
+
+    public static void main(String[] args) {
+
+        // 创建仓库类的对象
+        StoreHouse storeHouse = new StoreHouse();
+        // 创建线程类对象并启动
+        ProduceThread t1 = new ProduceThread(storeHouse);
+        ConsumerThread t2 = new ConsumerThread(storeHouse);
+        t1.start();
+        t2.start();
+    }
+}
+
+```
+
+
+
 - 线程池
+
+  
 
   -  实现Callable接口 
 
     - 从Java5开始新增加创建线程的第三种方式为实现java.util.concurrent.Callable接口。 
 
     - 常用的方法如下： 
-
+  
       | 方法声明 | 功能介绍       |
-      | -------- | -------------- |
+    | -------- | -------------- |
       | V call() | 计算结果并返回 |
 
   -  FutureTask类
@@ -940,40 +1056,101 @@ public class ThreadCommunicateTest implements Runnable {
     - java.util.concurrent.FutureTask类用于描述可取消的异步计算，该类提供了Future接口的基本实 现，包括启动和取消计算、查询计算是否完成以及检索计算结果的方法，也可以用于获取方法调用 后的返回结果。 
 
     - 常用的方法如下： 
+  
+      | 方法声明                         | 功能介绍                             |
+      | -------------------------------- | ------------------------------------ |
+    | FutureTask(Callable<V> callable) | 根据参数指定的引用来创建一个未来任务 |
+      | V get()                          | 获取call方法计算的结果               |
 
-      | 方法声明                      | 功能介绍                             |
-      | ----------------------------- | ------------------------------------ |
-      | FutureTask(Callable callable) | 根据参数指定的引用来创建一个未来任务 |
-      | V get()                       | 获取call方法计算的结果               |
+  ```java
+  
+import java.util.concurrent.Callable;
+  import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+  
+  public class ThreadCallableTest implements Callable {
 
+      @Override
+    public Object call() throws Exception {
+          // 计算1 ~ 10000之间的累加和并打印返回
+        int sum = 0;
+          for (int i = 1; i <= 10000; i++) {
+            sum +=i;
+          }
+          System.out.println("计算的累加和是：" + sum); // 50005000
+          return sum;
+      }
+  
+    public static void main(String[] args) {
+  
+        ThreadCallableTest tct = new ThreadCallableTest();
+          FutureTask ft = new FutureTask(tct);
+          Thread t1 = new Thread(ft);
+          t1.start();
+          Object obj = null;
+          try {
+            obj = ft.get();
+          } catch (InterruptedException e) {
+              e.printStackTrace();
+          } catch (ExecutionException e) {
+              e.printStackTrace();
+          }
+          System.out.println("线程处理方法的返回值是：" + obj); // 50005000
+      }
+  }
+  
+  ```
+  
+  
+  
   -  线程池的由来 
-
+  
     - 在服务器编程模型的原理，每一个客户端连接用一个单独的线程为之服务，当与客户端的会话结束 时，线程也就结束了，即每来一个客户端连接，服务器端就要创建一个新线程。 
     - 如果访问服务器的客户端很多，那么服务器要不断地创建和销毁线程，这将严重影响服务器的性 能。  
-
+  
   -  概念和原理 
-
+  
     - 线程池的概念：首先创建一些线程，它们的集合称为线程池，当服务器接受到一个客户请求后，就 从线程池中取出一个空闲的线程为之服务，服务完后不关闭该线程，而是将该线程还回到线程池 中。 
     - 在线程池的编程模式下，任务是提交给整个线程池，而不是直接交给某个线程，线程池在拿到任务 后，它就在内部找有无空闲的线程，再把任务交给内部某个空闲的线程，任务是提交给整个线程 池，一个线程同时只能执行一个任务，但可以同时向一个线程池提交多个任务。  
-
+  
   -  相关类和方法 
-
+  
     - 从Java5开始提供了线程池的相关类和接口：java.util.concurrent.Executors类和 java.util.concurrent.ExecutorService接口。 
-
+  
     -  其中Executors是个工具类和线程池的工厂类，可以创建并返回不同类型的线程池，常用方法如下
-
+  
       | 方法声明                                                | 功能介绍                              |
       | ------------------------------------------------------- | ------------------------------------- |
       | static ExecutorService newCachedThreadPool()            | 创建一个可根据需要创建新线程的 线程池 |
       | static ExecutorService newFixedThreadPool(int nThreads) | 创建一个可重用固定线程数的线程 池     |
       | static ExecutorService newSingleThreadExecutor()        | 创建一个只有一个线程的线程池          |
-
+  
     -  其中ExecutorService接口是真正的线程池接口，主要实现类是ThreadPoolExecutor，常用方法 如下 
-
-      | 方法声明                       | 功能介绍                             |
-      | ------------------------------ | ------------------------------------ |
-      | void execute(Runnable command) | 执行任务和命令，通常用于执行Runnable |
-      | Future submit(Callable task)   | 执行任务和命令，通常用于执行Callable |
-      | void shutdown()                | 启动有序关闭                         |
-
+  
+      | 方法声明                           | 功能介绍                             |
+      | ---------------------------------- | ------------------------------------ |
+      | void execute(Runnable command)     | 执行任务和命令，通常用于执行Runnable |
+      | <T>Future<T> submit(Callable task) | 执行任务和命令，通常用于执行Callable |
+      | void shutdown()                    | 启动有序关闭                         |
+  
+      ```java
+      
+      import java.util.concurrent.ExecutorService;
+      import java.util.concurrent.Executors;
+      
+      public class ThreadPoolTest {
+      
+          public static void main(String[] args) {
+      
+              // 1.创建一个线程池
+              ExecutorService executorService = Executors.newFixedThreadPool(10);
+              // 2.向线程池中布置任务
+              executorService.submit(new ThreadCallableTest());
+              // 3.关闭线程池
+              executorService.shutdown();
+          }
+      }
+      
+      ```
+      
       

@@ -25,13 +25,15 @@
       - 保证了数据传输的可靠性和有序性。 
       - 是一种全双工的字节流通信方式，可以进行大数据量的传输。 
       - 传输完毕后需要释放已建立的连接，发送数据的效率比较低。  
+      - ![](./picture/02 TCP三次握手.png)
+      - ![](./picture/03 TCP四次挥手.png)
   -  UDP协议 
     - 用户数据报协议(User Datagram Protocol)，是一种非面向连接的协议，类似于写信。 
       - 在通信的整个过程中不需要保持连接，其实是不需要建立连接。 
       - 不保证数据传输的可靠性和有序性。 
-      - 是一种全双工的数据报通信方式，每个数据报的大小限制在64K内。 
+    - 是一种全双工的数据报通信方式，每个数据报的大小限制在64K内。 
       - 发送数据完毕后无需释放资源，开销小，发送数据的效率比较高，速度快。 
-
+  
 -  IP地址 
   -  192.168.1.1 - 是绝大多数路由器的登录地址，主要配置用户名和密码以及Mac过滤。 
   - IP地址是互联网中的唯一地址标识，本质上是由32位二进制组成的整数，叫做IPv4，当然也有128 位二进制组成的整数，叫做IPv6，目前主流的还是IPv4。 
@@ -101,6 +103,201 @@
     - 客户端 Socket 与服务器端 Socket 对应, 都包含输入和输出流。
     -  客户端的socket.getInputStream() 连接于服务器socket.getOutputStream()。 
     - 客户端的socket.getOutputStream()连接于服务器socket.getInputStream() 
+    
+    
+  
+  ```java
+  
+  import java.io.BufferedReader;
+  import java.io.IOException;
+  import java.io.InputStreamReader;
+  import java.io.PrintStream;
+  import java.net.ServerSocket;
+  import java.net.Socket;
+  
+  public class ServerStringTest {
+  
+      public static void main(String[] args) {
+          ServerSocket ss = null;
+          Socket s = null;
+  
+          try {
+              // 1.创建ServerSocket类型的对象并提供端口号
+              ss = new ServerSocket(8888);
+  
+              // 2.等待客户端的连接请求，调用accept方法
+              while(true) {
+                  System.out.println("等待客户端的连接请求...");
+                  // 当没有客户端连接时，则服务器阻塞在accept方法的调用这里
+                  s = ss.accept();
+                  System.out.println("客户端" + s.getInetAddress() + "连接成功！");
+                  // 每当有一个客户端连接成功，则需要启动一个新的线程为之服务
+                  new ServerThread(s).start();
+              }
+          } catch (IOException e) {
+              e.printStackTrace();
+          } finally {
+              // 4.关闭Socket并释放有关的资源
+              if (null != ss) {
+                  try {
+                      ss.close();
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+              }
+          }
+      }
+  }
+  
+  ```
+  
+  ```java
+  
+  import com.lagou.task10.StaticOuter;
+  
+  import java.io.BufferedReader;
+  import java.io.IOException;
+  import java.io.InputStreamReader;
+  import java.io.PrintStream;
+  import java.net.Socket;
+  import java.util.Scanner;
+  
+  public class ClientStringTest {
+  
+      public static void main(String[] args) {
+          Socket s = null;
+          PrintStream ps = null;
+          Scanner sc = null;
+          BufferedReader br = null;
+  
+          try {
+              // 1.创建Socket类型的对象并提供服务器的主机名和端口号
+              s = new Socket("127.0.0.1", 8888);
+              System.out.println("连接服务器成功！");
+  
+              // 2.使用输入输出流进行通信
+              sc = new Scanner(System.in);
+              ps = new PrintStream(s.getOutputStream());
+              br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+  
+              while(true) {
+                  //Thread.sleep(10000);
+                  // 实现客户端发送的内容由用户从键盘输入
+                  System.out.println("请输入要发送的数据内容：");
+                  String str1 = sc.next();
+                  // 实现客户端向服务器发送字符串内容"hello"
+                  //ps.println("hello");
+                  ps.println(str1);
+                  System.out.println("客户端发送数据内容成功！");
+                  // 当发送的数据内容为"bye"时，则聊天结束
+                  if ("bye".equalsIgnoreCase(str1)) {
+                          System.out.println("聊天结束！");
+                          break;
+                  }
+                  // 实现接收服务器发来的字符串内容并打印
+                  String str2 = br.readLine();
+                  System.out.println("服务器回发的消息是：" + str2);
+              }
+  
+          } catch (IOException /*| InterruptedException*/ e) {
+              e.printStackTrace();
+          } finally {
+              // 3.关闭Socket并释放有关的资源
+              if (null != br) {
+                  try {
+                      br.close();
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+              }
+              if (null != ps) {
+                  ps.close();
+              }
+              if (null != sc) {
+                  sc.close();
+              }
+              if (null != s) {
+                  try {
+                      s.close();
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+              }
+          }
+      }
+  }
+  
+  ```
+  
+  ```java
+  
+  import java.io.BufferedReader;
+  import java.io.IOException;
+  import java.io.InputStreamReader;
+  import java.io.PrintStream;
+  import java.net.InetAddress;
+  import java.net.Socket;
+  
+  public class ServerThread extends Thread {
+      private Socket s;
+  
+      public ServerThread(Socket s) {
+          this.s = s;
+      }
+  
+      @Override
+      public void run() {
+          BufferedReader br = null;
+          PrintStream ps = null;
+  
+          try {
+              // 3.使用输入输出流进行通信
+              br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+              ps = new PrintStream(s.getOutputStream());
+  
+              while(true) {
+                  // 实现对客户端发来字符串内容的接收并打印
+                  // 当没有数据发来时，下面的方法会形成阻塞
+                  String s1 = br.readLine();
+                  InetAddress inetAddress = s.getInetAddress();
+                  System.out.println("客户端" + inetAddress + "发来的字符串内容是：" + s1);
+                  // 当客户端发来的内容为"bye"时，则聊天结束
+                  if ("bye".equalsIgnoreCase(s1)) {
+                      System.out.println("客户端" + inetAddress + "已下线！");
+                      break;
+                  }
+                  // 实现服务器向客户端回发字符串内容"I received!"
+                  ps.println("I received!");
+                  System.out.println("服务器发送数据成功！");
+              }
+          } catch (IOException e) {
+              e.printStackTrace();
+          } finally {
+              if (null != ps) {
+                  ps.close();
+              }
+              if (null != br) {
+                  try {
+                      br.close();
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+              }
+              if (null != s) {
+                  try {
+                      s.close();
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+              }
+          }
+  
+      }
+  }
+  
+  ```
+  
+  
 
 ###  3 基于udp协议的编程模型 
 
@@ -157,7 +354,92 @@
       | static InetAddress getLocalHost()         | 用于获取当前主机的通信地址       |
       | static InetAddress getByName(String host) | 根据参数指定的主机名获取通信地址 |
 
-      
+
+
+```java
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+
+public class ReceiveTest {
+
+    public static void main(String[] args) {
+        DatagramSocket ds = null;
+
+        try {
+            // 1.创建DatagramSocket类型的对象并提供端口号
+            ds = new DatagramSocket(8888);
+
+            // 2.创建DatagramPacket类型的对象并提供缓冲区
+            byte[] bArr = new byte[20];
+            DatagramPacket dp = new DatagramPacket(bArr, bArr.length);
+            // 3.通过Socket接收数据内容存放到Packet里面，调用receive方法
+            System.out.println("等待数据的到来...");
+            ds.receive(dp);
+            System.out.println("接收到的数据内容是：" + new String(bArr, 0, dp.getLength()) + "!");
+
+            // 实现将字符串内容"I received!"回发过去
+            byte[] bArr2 = "I received!".getBytes();
+            DatagramPacket dp2 = new DatagramPacket(bArr2, bArr2.length, dp.getAddress(), dp.getPort());
+            ds.send(dp2);
+            System.out.println("回发数据成功！");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 4.关闭Socket并释放有关的资源
+            if (null != ds) {
+                ds.close();
+            }
+        }
+    }
+}
+
+```
+
+```java
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+public class SendTest {
+
+    public static void main(String[] args) {
+        DatagramSocket ds = null;
+
+        try {
+            // 1.创建DatagramSocket类型的对象
+            ds = new DatagramSocket();
+            // 2.创建DatagramPacket类型的对象并提供接收方的通信地址和端口号
+            byte[] bArr = "hello".getBytes();
+            DatagramPacket dp = new DatagramPacket(bArr, bArr.length, InetAddress.getLocalHost(), 8888);
+            // 3.通过Socket发送Packet，调用send方法
+            ds.send(dp);
+            System.out.println("发送数据成功！");
+
+            // 接收回发的数据内容
+            byte[] bArr2 = new byte[20];
+            DatagramPacket dp2 = new DatagramPacket(bArr2, bArr2.length);
+            ds.receive(dp2);
+            System.out.println("接收到的回发消息是：" + new String(bArr2, 0, dp2.getLength()));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 4.关闭Socket并释放有关的资源
+            if (null != ds) {
+                ds.close();
+            }
+        }
+    }
+}
+
+```
+
+ 
 
 ### 4 URL类 
 
@@ -192,3 +474,50 @@
     | void disconnect()            | 断开连接   |
 
     
+
+```java
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+public class URLTest {
+
+    public static void main(String[] args) {
+
+        try {
+            // 1.使用参数指定的字符串来构造对象
+            URL url = new URL("https://www.lagou.com/");
+            // 2.获取相关信息并打印出来
+            System.out.println("获取到的协议名称是：" + url.getProtocol());
+            System.out.println("获取到的主机名称是：" + url.getHost());
+            System.out.println("获取到的端口号是：" + url.getPort());
+
+            // 3.建立连接并读取相关信息打印出来
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            InputStream inputStream = urlConnection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            String str = null;
+            while ((str = br.readLine()) != null) {
+                System.out.println(str);
+            }
+            br.close();
+            // 断开连接
+            urlConnection.disconnect();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+
+```
+
