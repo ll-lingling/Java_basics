@@ -5,13 +5,14 @@ import java.util.List;
 
 public class Studentintput {
     @SuppressWarnings("unchecked")
-    public static List<Student> readList() {
+    public static List readList(String filename) {
         ObjectInputStream in = null;
-        List<Student> arr = null;
+        List arr = null;
 
         try {
-            in = new ObjectInputStream(new FileInputStream("./com.bigdatalearn.answer1/student.txt"));
+            in = new ObjectInputStream(new FileInputStream(filename));
             Object obj = in.readObject();
+            arr = (List)obj;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {

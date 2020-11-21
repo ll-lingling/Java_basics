@@ -6,10 +6,10 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 
 public class StudentOutput {
-    public static void writeList(List arr) {
+    public static void writeList(List arr,String filePath) {
         ObjectOutputStream out = null;
         try {
-            out = new ObjectOutputStream(new FileOutputStream("./com.bigdatalearn.answer1/student.txt"));
+            out = new ObjectOutputStream(new FileOutputStream(filePath));
             out.writeObject(arr);
         } catch (IOException e) {
             e.printStackTrace();

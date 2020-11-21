@@ -8,34 +8,24 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 public class DeleteTest {
-    public static void deleteAll(String path) {
-        // 需要删除的目录
-        File folders = new File(path);
+    public static void deleteAll(File file) {
+        File[] filesArray = file.listFiles();
         // 如果目录不存在则返回
-        if (!folders.exists()) {
-            System.out.println("目录不存在");
-            return;
-        }
-        // 如果目录为空，则直接删除，并返回
-        if (0 == folders.length()) {
-            folders.delete();
-            System.out.println(folders.getName() + "被删除了！");
-            return;
-        }
-        // 遍历目录的内容
-        for (File f : folders.listFiles()) {
-            if (f.isFile()) {
-                // 如果是文件则直接删除
-                f.delete();
-                System.out.println(f.getName() + "被删除了！");
-            } else {
-                // 如果是目录，则递归处理
-                deleteAll(f.getAbsolutePath());
+
+        for (File tf : filesArray) {
+            String name = tf.getName();
+            // 判断是否为文件或是空目录，若是则直接删除
+            if (tf.isFile()||tf.list().length > 0) {
+                System.out.println(name);
+                tf.delete();
+            }
+            // 若是非空目录递归
+            if (tf.isDirectory()) {
+                deleteAll(tf);
             }
         }
-        // 删除目录自身
-        folders.delete();
-        System.out.println(folders.getName() + "被删除了！");
+        file.delete();
+
     }
 
     public static void main(String[] args) {
@@ -48,6 +38,6 @@ public class DeleteTest {
             e.printStackTrace();
         }
         // 删除
-        deleteAll("./com");
+        deleteAll(new File("D:/code/big_data_learn/com"));
     }
 }

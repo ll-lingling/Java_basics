@@ -1063,46 +1063,45 @@ public class StoreHouseTest {
       | V get()                          | 获取call方法计算的结果               |
 
   ```java
+  import java.util.concurrent.Callable;
+    import java.util.concurrent.ExecutionException;
+  import java.util.concurrent.FutureTask;
   
-import java.util.concurrent.Callable;
-  import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+    public class ThreadCallableTest implements Callable {
   
-  public class ThreadCallableTest implements Callable {
-
-      @Override
-    public Object call() throws Exception {
-          // 计算1 ~ 10000之间的累加和并打印返回
-        int sum = 0;
-          for (int i = 1; i <= 10000; i++) {
-            sum +=i;
-          }
-          System.out.println("计算的累加和是：" + sum); // 50005000
-          return sum;
-      }
+        @Override
+      public Object call() throws Exception {
+            // 计算1 ~ 10000之间的累加和并打印返回
+          int sum = 0;
+            for (int i = 1; i <= 10000; i++) {
+              sum +=i;
+            }
+            System.out.println("计算的累加和是：" + sum); // 50005000
+            return sum;
+        }
+        
+      public static void main(String[] args) {
+        
+          ThreadCallableTest tct = new ThreadCallableTest();
+            FutureTask ft = new FutureTask(tct);
+            Thread t1 = new Thread(ft);
+            t1.start();
+            Object obj = null;
+            try {
+              obj = ft.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            System.out.println("线程处理方法的返回值是：" + obj); // 50005000
+        }
   
-    public static void main(String[] args) {
-  
-        ThreadCallableTest tct = new ThreadCallableTest();
-          FutureTask ft = new FutureTask(tct);
-          Thread t1 = new Thread(ft);
-          t1.start();
-          Object obj = null;
-          try {
-            obj = ft.get();
-          } catch (InterruptedException e) {
-              e.printStackTrace();
-          } catch (ExecutionException e) {
-              e.printStackTrace();
-          }
-          System.out.println("线程处理方法的返回值是：" + obj); // 50005000
-      }
-  }
-  
+    }
   ```
-  
-  
-  
+
+
+
   -  线程池的由来 
   
     - 在服务器编程模型的原理，每一个客户端连接用一个单独的线程为之服务，当与客户端的会话结束 时，线程也就结束了，即每来一个客户端连接，服务器端就要创建一个新线程。 
@@ -1116,23 +1115,23 @@ import java.util.concurrent.FutureTask;
   -  相关类和方法 
   
     - 从Java5开始提供了线程池的相关类和接口：java.util.concurrent.Executors类和 java.util.concurrent.ExecutorService接口。 
-  
+    
     -  其中Executors是个工具类和线程池的工厂类，可以创建并返回不同类型的线程池，常用方法如下
-  
+    
       | 方法声明                                                | 功能介绍                              |
       | ------------------------------------------------------- | ------------------------------------- |
       | static ExecutorService newCachedThreadPool()            | 创建一个可根据需要创建新线程的 线程池 |
       | static ExecutorService newFixedThreadPool(int nThreads) | 创建一个可重用固定线程数的线程 池     |
       | static ExecutorService newSingleThreadExecutor()        | 创建一个只有一个线程的线程池          |
-  
+    
     -  其中ExecutorService接口是真正的线程池接口，主要实现类是ThreadPoolExecutor，常用方法 如下 
-  
+    
       | 方法声明                           | 功能介绍                             |
       | ---------------------------------- | ------------------------------------ |
       | void execute(Runnable command)     | 执行任务和命令，通常用于执行Runnable |
       | <T>Future<T> submit(Callable task) | 执行任务和命令，通常用于执行Callable |
       | void shutdown()                    | 启动有序关闭                         |
-  
+    
       ```java
       
       import java.util.concurrent.ExecutorService;
@@ -1152,5 +1151,5 @@ import java.util.concurrent.FutureTask;
       }
       
       ```
-      
-      
+
+​      

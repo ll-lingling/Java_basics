@@ -1,8 +1,12 @@
 package com.bigdatalearn.answer1;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Student {
+public class Student implements Serializable {
+
+
+    private static final long serialVersionUID = 8616341463077691469L;
     private Integer sid;  // 学号
     private String name;  // 姓名
     private Integer age;  // 年龄

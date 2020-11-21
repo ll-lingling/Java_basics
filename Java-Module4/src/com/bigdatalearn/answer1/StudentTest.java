@@ -23,10 +23,12 @@ public class StudentTest {
     public static void main(String[] args) {
 
         List arr;
-        File txt = new File("./com.bigdatalearn.answer1/student.txt");
+        String filePath = "D:/code/big_data_learn/Java-Module4/src/com/bigdatalearn/answer1/student.txt";
+        File txt = new File(filePath);
         if (txt.exists()) {
             // 如果文件存在则读取
-            arr = Studentintput.readList();
+            arr = Studentintput.readList(filePath);
+            System.out.println(arr);
         } else {
             arr = new ArrayList();
         }
@@ -62,7 +64,7 @@ public class StudentTest {
                     break;
                 case 6:
                     System.out.println("正在退出系统...");
-                    StudentOutput.writeList(arr);
+                    StudentOutput.writeList(arr, filePath);
                     return;
                 default:
                     break;

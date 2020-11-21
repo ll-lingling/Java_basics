@@ -9,5 +9,6 @@ public class StudentAll {
 
             System.out.println(arr.get(i));
         }
+
     }
 }
