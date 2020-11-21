@@ -7,15 +7,15 @@ import java.net.UnknownHostException;
 public class Client {
     public static void main(String[] args) {
         System.out.println("客户端已启动");
-        File file = new File("Example");
+        File file = new File("d:/aa");
         file.mkdirs();
-        File file2 = new File("Example\\a.txt");
+        File file2 = new File("d:/aa/a.txt");
         Socket socket = null;
         InputStream is = null;
         OutputStream os = null;
         FileInputStream fis = null;
         try {
-            socket = new Socket("10.16.152.24", 7777);
+            socket = new Socket("127.0.0.1", 8888);
             is = socket.getInputStream();
             fis = new FileInputStream(file2);
             os = socket.getOutputStream();
