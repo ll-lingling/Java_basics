@@ -1,22 +1,22 @@
 <c3p0-config>
-  
-  <!--默认配置-->
-    <default-config>  
-		<!-- initialPoolSize：初始化时获取三个连接，
-			  取值应在minPoolSize与maxPoolSize之间。 --> 
-        <property name="initialPoolSize">3</property>  
-		
-		<!-- maxIdleTime：最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。-->
-        <property name="maxIdleTime">60</property>  
-		
-		<!-- maxPoolSize：连接池中保留的最大连接数 -->
-        <property name="maxPoolSize">100</property>  
-		<!-- minPoolSize: 连接池中保留的最小连接数 -->
-        <property name="minPoolSize">10</property>  
-		
-    </default-config>  
-  
-   <!--配置连接池mysql-->
+
+    <!--默认配置-->
+    <default-config>
+        <!-- initialPoolSize：初始化时获取三个连接，
+              取值应在minPoolSize与maxPoolSize之间。 -->
+        <property name="initialPoolSize">3</property>
+
+        <!-- maxIdleTime：最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。-->
+        <property name="maxIdleTime">60</property>
+
+        <!-- maxPoolSize：连接池中保留的最大连接数 -->
+        <property name="maxPoolSize">100</property>
+        <!-- minPoolSize: 连接池中保留的最小连接数 -->
+        <property name="minPoolSize">10</property>
+
+    </default-config>
+
+    <!--配置连接池mysql-->
 
     <named-config name="mysql">
         <property name="driverClass">com.mysql.jdbc.Driver</property>
@@ -29,5 +29,6 @@
         <property name="minPoolSize">10</property>
     </named-config>
     <!--配置连接池2,可以配置多个-->
+
 
 </c3p0-config>
