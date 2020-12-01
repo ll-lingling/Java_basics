@@ -1,38 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>1111</title>
+    <meta charset="utf-8">
+    <title>DOM 教程</title>
 </head>
-<style>
-    li {
-        float: left;
-        /*纵向变水平*/
-        width: 150px;
-        /*li的宽度*/
-        list-style-type: none;
-        /*去除圆点*/
-        background: black;
-        /*背景色*/
-        color: white;
-        /*字体颜色*/
-        text-align: center;
-        /*文字居中对齐*/
-        line-height: 40px;
-        /*行高*/
-        font-size: 1.1em;
-        /*字体大小*/
-        cursor: pointer;
-        /*鼠标央视*/
-    }
-</style>
+
 
 <body>
-
-    
+    <script>
+        function bian() {
+            document.body.style.backgroundColor = "red";
+        }
+        //3秒之后调用
+        setTimeout(bian, 3000);
+    </script>
 </body>
 
 </html>
