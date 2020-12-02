@@ -838,7 +838,7 @@ console.log( timestr );
 
 ####  DOM修改  
 
--  修改 HTML DOM 意味着许多不同的方面： 
+- 修改 HTML DOM 意味着许多不同的方面： 
 
   - 改变 HTML 内容
   -  改变 CSS 样式 
@@ -869,6 +869,9 @@ console.log( timestr );
           function chou() {
               document.getElementById("hello").style.color = "red";
               document.getElementById("hello").style.fontFamily = "华文彩云";
+          }
+           function test() {
+              document.getElementById("hello").innerHTML = "走哇，喝点去~！";
           }
       </script>
       <h2 id="hello">你好！</h2>
@@ -995,8 +998,8 @@ console.log( timestr );
 
   -  仅在表单元素中有效。 
 
-    - onblur 当元素失去焦点时执行脚本 
-    - onfocus 当元素获得焦点时执行脚本 
+    - onblur 当元素**失去焦点**时执行脚本 
+    - onfocus 当元素**获得焦点**时执行脚本 
 
     ```html
     <body>
@@ -1406,32 +1409,30 @@ console.log( timestr );
 
         ```js
         sessionStorage.setItem("name", "klay");
-        
         ```
-
-      - 提取数据
-
-        ```js
+        
+- 提取数据
+      
+  ```js
         var lastname = sessionStorage.getItem("name");
-        
         ```
-
+        
       - 删除指定键数据
 
         ```js
-        sessionStorage.removeItem("name");
+  sessionStorage.removeItem("name");
         ```
-
+      
       - 删除所有数据
 
         ```js
-        sessionStorage.clear();
+  sessionStorage.clear();
         ```
-
+      
     -  案例：记录点击了几下按钮 
 
       ```html
-      <body>
+  <body>
           <button onclick="dian()">点我</button>
           <h3 id="result"></h3>
           <script>

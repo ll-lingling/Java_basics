@@ -88,6 +88,7 @@
     ```
 
 - 类选择器
+  
   -  类选择器在使用时使用"."来描述，它描述的是元素上的class属性值 
 -  id选择器 
   -  它只能选择一个元素，使用 "#" 引入，引用的是元素的id属性值。 
@@ -181,16 +182,16 @@
 
     - :active 向被激活的元素添加样式。 
     - :hover 当鼠标悬浮在元素上方时，向元素添加样式。 
-    - :link 向未被访问的链接添加样式。 
-    - :visited 向已被访问的链接添加样式。 
+    - :link 向未被访问(点击)的链接添加样式。 
+    - :visited 向已被访问(点击)的链接添加样式。 
     - :first-child 向元素的第一个子元素添加样式。 
 
   - 超链接的伪类：要遵守使用顺序，爱恨原则 LoVeHAte，lvha 
 
     ```CSS
-    a:link {color: #FF0000} /* 未访问的链接 */
+    a:link {color: #FF0000} /* 未点击的链接 */
     a:visited {color: #00FF00} /* 已访问的链接 */
-    a:hover {color: #FF00FF} /* 鼠标移动到链接上 */
+    a:hover {color: #FF00FF} /* 鼠标移动(悬停)到链接上 */
     a:active {color: #0000FF} /* 选定的链接 */
     ```
 
@@ -329,15 +330,29 @@
 
 ```html
 <style>
-    div{
-      border-width: 20px;
-      border-color: green;
-      border-style: outset;
+    div {
+       width: 400px;
+       height: 40px;
     }
-  </style>
-  <body>
-    <div>hello</div>
-  </body>
+    .a{
+        /*设置四个边*/
+        border: width 2px; 
+        border-color: blueviolet;
+        border-style: solid;
+
+        border-right-color: crimson;/* 设置右边框的颜色*/
+        border-bottom-style: dashed;  /*设置下边框样式*/
+    }
+
+    .b{
+        border: 1px solid red;/*此为a的简化版本*/
+    }
+</style>
+<body>
+    <div class="a">hello</div>
+    <div class="b">hello</div>
+
+</body>
 ```
 
  **border-style取值：**  
@@ -390,23 +405,74 @@
     ```html
     <style>
         div{
-          border: 3px red solid;
-          margin: 30px;
-          padding: 20px;
+            width: 300px;
+            height: 50px;
+            border: 2px solid greenyellow;
+            margin-top: 50px;  /*上外边距*/
+            margin-left: 30px;  /*上左边距*/
+            padding-top: 20px;  /*上内边距*/
+            padding-left: 50px; /*左外边距*/
         }
-      </style>
-      <body>
+    </style>
+    <body>
         <div>hellohellohellohellohellohello</div>
-      </body>
+    </body>
+    
     ```
 
 #### CSS定位
 
 - 默认定位
-  -  块级元素：h1~h6，p, div 等，自上而下，垂直排列（自动换行）；可以改变宽高  ![](./picture/day28/块级元素.png)
-  -  行内元素：a,b,span,等，从左向右，水平排列（不会换行）；不能改变宽高 ![](./picture/day28/行内元素.png) 
-  -  行内块元素：input,img等，从左向右，水平排列（自动换行）；可以改变宽高 ![](./picture/day28/行内块元素.png)
+  - 块级元素：h1~h6，p, div 等，自上而下，垂直排列（自动换行）；可以改变宽高  
+  
+  - 行内元素：a,b,span,等，从左向右，水平排列（不会换行）；不能改变宽高  
 
+  - 行内块元素：input,img等，从左向右，水平排列（自动换行）；可以改变宽高 
+  
+    ```html
+    <style>
+        div{
+            width: 100px;
+            height: 50px;
+            border: 1px solid red;
+        }
+    
+        span{
+            width: 100px;
+            height: 100px;
+            border: 1px solid red;
+        }
+        a{
+            width: 50px;
+            height: 50px;
+            border: 1px solid red;
+            /*a标签事行内元素，无法改变宽高，但只要转换成行内块元素，就可以改变*/
+            display: inline-block; /*将a元素显示成行内块*/
+        }
+        
+    </style>
+    <body>
+        <div>hello</div>
+        <div>hello</div>
+        <div>hello</div>
+    <hr>
+        <span>world</span>
+        <span>world</span>
+        <span>world</span>
+    <hr>
+        <input>
+        <input>
+        <input>
+    
+        <h1>如何让span标签也可以改变宽高，</h1>
+        <p>使用display属性进行转换</p>
+    <hr>
+        <a href="baidu.com"></a>
+    </body>
+    ```
+  
+    
+  
 - 浮动定位
 
   -  让元素“飞”起来。不仅可以靠着左边或右边。还可以消除“块级”的霸道特性（独自占一行）。 
@@ -420,8 +486,9 @@
     ![](./picture/day28/浮动定位.png)
 
 - 相对定位
-  -  和原来的位置进行比较，进行移动定位（偏移） ![](./picture/day28/相对定位.png)
-
+  
+-  相对于原来的位置比较，进行移动定位（偏移） ![](./picture/day28/相对定位.png)
+  
 - 绝对定位
 
   -  本元素与已定位的祖先元素的距离
@@ -566,14 +633,14 @@
 
 #### 背景
 
--  背景位置 
+- 背景位置 
 
   -  background-origin：指定了背景图像的位置区域 
     - border-box : 背景贴边框的边 
     - padding-box : 背景贴内边框的边 
     - content-box : 背景贴内容的边 
 
-  ```html
+  ```css
   <style>
     div {
       background: url("img/1.jpg") no-repeat;

@@ -372,7 +372,7 @@
   - 常见的 登录页面、注册页面 都离不开表单的应用 
 
 - form属性
-  -  action：整个表单提交的目的地  
+  -  action：整个表单提交的目的地  （也就是服务器地址）
   -  method：表单提交的方式 
     -  get：提交时，传输数据量少（传递普通文字信息，传递照片会失败），明文提交（在浏览器的url 后面会显示提交的数据，不适合用于登录）  
     -  post：提交时，传输数据量大（传递文字和图片都行），密文提交（浏览器的url后面看不到提交 的数据） 
@@ -401,7 +401,7 @@
 
 ```html
 <body>
-    <form action="baidu" method="GET">
+    <form action="服务器地址" method="GET">
         <p>帐号：<input name="a" type="text" placeholder="请输入帐号..."
         maxlength="5" ></p>
         <p>密码：<input name="b" type="password"></p>
