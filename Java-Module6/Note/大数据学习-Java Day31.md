@@ -53,20 +53,22 @@
               //1）创建Ajax引擎对象
               var xmlhttp = new XMLHttpRequest();
               //2）为Ajax引擎对象绑定监听（监听服务器已将数据响应给引擎）
-              xmlhttp.onreadystatechange = function() { //引擎状态一改变就触发该事件
-                      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                          //5）接受响应数据
-                          //获得服务器端返回给引擎对象的数据
-                          alert(xmlhttp.responseText);
-                      }
+              // onreadystatechange 监听核心对象 XMLHttpRequest对象的时间
+              xmlhttp.onreadystatechange = function () { //引擎状态一改变就触发该事件
+                  // readyState 执行的状态 1 2 3 4 （响应结束）
+                  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                      //5）接受响应数据
+                      //获得服务器端返回给引擎对象的数据
+                      alert(xmlhttp.responseText);
                   }
-                  //3）绑定提交地址
-                  /*
-                  GET:请求方式
-                  url地址
-                  true是否异步 代表异步 false代表同步
-                  */
-              xmlhttp.open("GET", "/AjaxDemo/ajaxServlet", true);
+              }
+              //3）绑定提交地址
+              /*
+              GET:请求方式
+              url地址
+              true是否异步 代表异步 false代表同步
+              */
+              xmlhttp.open("GET", "/J/Demo", true);
               //4）发送请求
               xmlhttp.send();
           }
@@ -74,7 +76,7 @@
   </head>
   
   <body>
-      <input type="button" value="ajax异步访问服务器端" onclick="sendRequest()">
+  <input type="button" value="ajax异步访问服务器端" onclick="sendRequest()">
   </body>
   
   </html>
@@ -83,18 +85,35 @@
 -  Servlet代码 
 
   ```java
-      @WebServlet("/ajaxServlet")
-      public class AjaxServlet extends HttpServlet {
-          protected void doGet(HttpServletRequest request, HttpServletResponse response)
-                  throws ServletException, IOException {
-              response.getWriter().write("ajax response data ...");
-          }
+  /*
+   * 是一个web服务器的动态资源，可以由客户端访问，还可以给客户端返回信息
+   * 继承自httpservlet
+   * 重写doget，dopost方法
+   * 添加一个webservlet注解
+   * 把项目部署到tomcat启动
+   * */
   
-          protected void doPost(HttpServletRequest request, HttpServletResponse response)
-                  throws ServletException, IOException {
-              doGet(request, response);
-          }
+  @WebServlet("/Demo")
+  public class Demo extends HttpServlet {
+      @Override
+      protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+          doPost(req,resp);
       }
+  
+  
+      @Override
+      protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+          //设置请求编码
+          req.setCharacterEncoding("UTF-8");
+          //设置响应编码
+          resp.setContentType("text/html;charset=utf-8");
+          //打印一句话表明请求已经到达服务器资源
+          System.out.println("jiiehsou");
+          //通过打印留给客户端返回一个hello
+          resp.getWriter().println("hello.......");
+      }
+  }
+  
   ```
 
 ### 3  jQuery方式的ajax 
@@ -165,16 +184,14 @@
     ```java
         @WebServlet("/ajaxServlet")
         public class AjaxServlet extends HttpServlet {
-            protected void doGet(HttpServletRequest request, HttpServletResponse response)
-                    throws ServletException, IOException {
+            protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     //获得请求参数
                 String name = request.getParameter("name");
                 String age = request.getParameter("age");
                 response.getWriter().write("ajax response data ..." + name + "..." + age);
             }
     
-            protected void doPost(HttpServletRequest request, HttpServletResponse response)
-                    throws ServletException, IOException {
+            protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
                 doGet(request, response);
             }
         }
@@ -236,16 +253,14 @@
     ```java
         @WebServlet("/ajaxServlet")
         public class AjaxServlet extends HttpServlet {
-            protected void doGet(HttpServletRequest request, HttpServletResponse response)
-                    throws ServletException, IOException {
+            protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
                 //获得请求参数
                 String name = request.getParameter("name");
                 String age = request.getParameter("age");
                 response.getWriter().write("ajax response data ..." + name + "..." + age);
             }
     
-            protected void doPost(HttpServletRequest request, HttpServletResponse response)
-                    throws ServletException, IOException {
+            protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
                 doGet(request, response);
             }
         }
@@ -315,16 +330,14 @@
     ```java
        @WebServlet("/ajaxServlet")
         public class AjaxServlet extends HttpServlet {
-            protected void doGet(HttpServletRequest request, HttpServletResponse response)
-                    throws ServletException, IOException {
+            protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     //获得请求参数
                 String name = request.getParameter("name");
                 String age = request.getParameter("age");
                 response.getWriter().write("ajax response data ..." + name + "..." + age);
             }
     
-            protected void doPost(HttpServletRequest request, HttpServletResponse response)
-                    throws ServletException, IOException {
+            protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
                 doGet(request, response);
             }
         }

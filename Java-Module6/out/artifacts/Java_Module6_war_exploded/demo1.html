@@ -1,0 +1,26 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Insert title here</title>
+    <script type="text/javascript" src="jquery-3.3.1.js"></script>
+    <script type="text/javascript">
+        function sendRequest() {
+            //发送ajax请求
+            // 格式$.get(url，[data],[callback],[type])
+            // url：必填参数，请求服务器的地址
+            // data:发送给服务器的参数key=value ，服务器可以根据key值获取value
+            //callback:回调函数，当服务器响应完毕后，该函数会执行，形式参数data，代表的是服务器返回数据
+            //type:代表服务器返回的数据类型 .text文本 json
+            $.get("/J/Demo", "name=haohao&age=33", function (data) {
+                alert(data);
+            }, "text");
+        }
+    </script>
+</head>
+
+<body>
+<input type="button" value="ajax异步访问服务器端" onclick="sendRequest()">
+</body>
+
+</html>

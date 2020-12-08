@@ -208,7 +208,7 @@
   }
   ```
 
--  Js页面加载方式2 
+- Js页面加载方式2 
 
   ```js
   格式1:
@@ -221,7 +221,9 @@
   })
   ```
 
-   结论: javaScript的页面加载只执行一次,最后一次加载的执行; jQuery的页面加载执行多次,每次都执行  
+  -  结论: 
+    - javaScript的页面加载只执行一次,编写多个页面加载函数只有，最后一次加载的执行; 
+    - jQuery的页面加载执行多次,每次都执行  
 
 -  代码演示:
 
@@ -316,7 +318,7 @@
 <input type="button" value="点我试试" id="btn1" onclick="fn()">
 function fn(){
     alert("试试就试试!!");
-}
+} 
 ```
 
 #####  元素派发事件 
@@ -393,23 +395,23 @@ function fn(){
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script src="../js/jquery-3.3.1.js"></script>
+    <script src="./js/jquery-3.3.1.js"></script>
     <style>
         div {
             border: 1px solid black;
         }
-
+        
         p {
             border: 1px solid gray;
             width: 250px;
         }
-
+        
         #box1,
         #box2 {
             width: 400px;
             height: 250;
         }
-
+        
         div {
             width: 300px;
             height: 120px;
@@ -447,9 +449,26 @@ function fn(){
     <input type="button" value="选择所有p标签,设置背景颜色为orange" id="btn3" />
 </body>
 <script>
-    //1.选取id为box1的div,背景色设置为 yellow
-    //2.class 为dd的元素,设置背景色为 lightblue
-    //3.选择所有p标签,设置背景颜色为orange
+    /*
+    	基本选择器
+    	id选择器	$("#id") ----> jQuery对象
+        类选择器	$(".class") ---->得到一类jQuery对象
+        标签选择器	$("标签名") ---->得到一类jQuery对象
+    */
+    $(function() {
+        //1.选取id为box1的div,背景色设置为 yellow
+        $("#btn1").click(function() {
+                $("#box1").css("background-color", "yellow")
+            })
+            //2.class 为dd的元素,设置背景色为 lightblue
+        $("#btn2").click(function() {
+                $(".dd").css("background-color", "lightblue")
+            })
+            //3.选择所有p标签,设置背景颜色为orange
+        $("#btn3").click(function() {
+            $("p").css("background-color", "orange")
+        })
+    })
 </script>
 
 </html>
@@ -459,10 +478,10 @@ function fn(){
 
 - 语法 
 
-| 选择器名称 | 语法     | 解释                       |
-| ---------- | -------- | -------------------------- |
-| 后代选择器 | $("A B") | 选择A元素内部的所有B元素   |
-| 子选择器   | $("A>B") | 选择A元素内部的所有B子元素 |
+| 选择器名称 | 语法     | 解释                     |
+| ---------- | -------- | ------------------------ |
+| 后代选择器 | $("A B") | 选择A元素内部的所有B元素 |
+| 子选择器   | $("A>B") | 选择A元素内部一代B子元素 |
 
 - 代码
 
@@ -471,23 +490,23 @@ function fn(){
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script src="../js/jquery-3.3.1.js"></script>
+    <script src="./js/jquery-3.3.1.js"></script>
     <style>
         div {
             border: 1px solid black;
         }
-
+        
         p {
             border: 1px solid gray;
             width: 250px;
         }
-
+        
         #box1,
         #box2 {
             width: 400px;
             height: 250;
         }
-
+        
         div {
             width: 300px;
             height: 120px;
@@ -526,7 +545,19 @@ function fn(){
     <input type="button" value="选择 body内的所有p元素." id="btn1" />
     <input type="button" value="在body内,选择子元素是div的。" id="btn2" />
 </body>
+
 <script>
+    $(function() {
+        //1.选择 body内的所有p元素
+        $("#btn1").click(function() {
+                $("body p").css("background-color", "yellow")
+            })
+            //2.在body内,选择子元素是div的
+        $("#btn2").click(function() {
+            $("body>div").css("background-color", "red")
+        })
+
+    })
 </script>
 
 </html>
@@ -553,24 +584,34 @@ function fn(){
         div {
             border: 1px solid black;
         }
-
+        
         p {
             border: 1px solid gray;
             width: 250px;
         }
-
+        
         #box1,
         #box2 {
             width: 400px;
             height: 250;
         }
-
+        
         div {
             width: 300px;
             height: 120px;
         }
     </style>
     <script>
+        $(function() {
+            //1.选取含有 属性title 的div元素
+            $("#btn1").click(function() {
+                    $("div[title]").css("background-color", "red")
+                })
+                //2.选取 属性title值等于lagou的div元素
+            $("#btn2").click(function() {
+                $("div[title=edu]").css("background-color", "green")
+            })
+        })
     </script>
     <title>无标题文档</title>
 </head>
@@ -606,7 +647,7 @@ function fn(){
     <input type="button" value="选取 属性title值等于lagou的div元素" id="btn2" />
 </body>
 
-</html>
+</html> 
 ```
 
 ####  基本过滤选择器 
@@ -623,7 +664,7 @@ function fn(){
 | 大于索引选择器 | :gt(index) | 大于指定索引元素               |
 | 小于索引选择器 | :lt(index) | 小于指定索引元素               |
 
-- 代码
+- 练习代码
 
 ```html
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -745,6 +786,45 @@ function fn(){
     <link rel="stylesheet" type="text/css" href="../css/style.css" />
     <script type="text/javascript">
     </script>
+    <script>
+        $(function() {
+            //1-选取所有的表单子元素个数
+            $("#btn1").click(function() {
+                var len = $(":input").length
+                alert(len)
+            })
+
+            //2-选择文本框,打印文本框内容
+            $("#btn2").click(function() {
+                    var textVal = $(":text").val();
+                    alert(textVal)
+                })
+                //3-选择单选框,获取单选框的值
+            $("#btn3").click(function() {
+                    var sex = $(":radio:checked").val();
+                    alert(sex)
+                })
+                //4-选择复选框,获取所有复选框,打印长度
+            $("#btn4").click(function() {
+                    var len1 = $(":checkbox").length
+                    alert(len1)
+                })
+                //5-选择复选框,获取所有复选框,获取用户勾选中的值
+            $("#btn5").click(function() {
+                    var chkArr = $(":checkbox:checked");
+                    for (var i = 0; i < chkArr.length; i++) {
+                        var val = $(chkArr[i]).val();
+                        alert(val);
+
+                    }
+                })
+                //6-获取下拉选框选中的值
+            $("#btn6").click(function() {
+                var selectedVal = $(":selected").val();
+                alert(selectedVal)
+            })
+        })
+    </script>
 </head>
 
 <body>
@@ -758,8 +838,7 @@ function fn(){
     <hr>
     <form id="form1" action="#">
         <input type="button" value="Button" /><br />
-        <input type="checkbox" name="c" value="ck0" />1<input type="checkbox" name="c" value="ck1" />2<input
-            type="checkbox" name="c" value="ck2" />3<br />
+        <input type="checkbox" name="c" value="ck0" />1<input type="checkbox" name="c" value="ck1" />2<input type="checkbox" name="c" value="ck2" />3<br />
         <input type="file" /><br />
         <input type="hidden" /><br />
         <input type="image" src="img/3.jpg" /><br />
@@ -807,7 +886,7 @@ function fn(){
             font-weight: bold;
             color: red;
         }
-
+        
         .add {
             font-style: italic;
         }
@@ -815,6 +894,41 @@ function fn(){
     <!-- 引入jQuery -->
     <script src="js/jquery-3.5.1.js"></script>
     <script type="text/javascript">
+    </script>
+    <script>
+        //1.获取P元素的HTML代码
+        function fn1() {
+            var ht = $("p").html();
+            alert(ht);
+        }
+        //2.获取P元素的文本
+        function fn2() {
+            var te = $("p").text();
+            alert(te);
+        }
+        //3.设置P元素的HTML代码
+        function fn3() {
+            $("p").html("<i>内容更换..............</i>")
+        }
+        //4.设置P元素的文本
+        function fn4() {
+            $("p").text("内容更换..............text")
+        }
+        //5.获取按钮的value值
+        function fn5() {
+            var va = $("#btn1").val();
+            alert(va)
+        }
+        //6.设置按钮的value值
+        function fn6() {
+            $("#btn2").val("更改按钮内容")
+        }
+        //7.获取当前按钮对象
+        function fn7(t) {
+            //传递this代表的是当前input标签的dom对象
+            alert(t.value);
+            alert($(t).val())
+        }
     </script>
 </head>
 
@@ -932,7 +1046,7 @@ function fn(){
 
 | API方法                  | 解释                                     |
 | ------------------------ | ---------------------------------------- |
-| $("")                    | 创建A元素对象                            |
+| $("```<A></A>```")       | 创建A元素对象                            |
 | 父元素.append(element)   | 添加成最后一个子元素，两者之间是父子关系 |
 | 父元素.prepend(element)  | 添加成第一个子元素，两者之间是父子关系   |
 | 兄弟元素.before(element) | 添加到当前元素的前面，两者之间是兄弟关系 |
@@ -950,14 +1064,23 @@ function fn(){
     <!-- 引入jQuery -->
     <script src="js/jquery-3.5.1.js"></script>
     <script>
-        /*
-        * 1.创建2个带文本和title属性的li节点
-        * 2.获取ul父节点
-        * 3.获取第2个li节点
-        * 4.将第1个li节点添加为ul父节点的最后一个子节点
-        * 5.将第2个li节点追加为ul父节点的第一个子节点
-        * 6 最后一个元素之后添加$li_3
-        */
+        function fn() {
+
+            // 1. 创建2个带文本和title属性的li节点
+            var $li1 = $("<li title='zhenji'>甄姬</li>")
+            var $li2 = $("<li title='yuji'>虞姬</li>")
+            var $li3 = $("<li title='lvbu'>吕布</li>")
+                //  2. 获取ul父节点 *
+            var $ul = $("ul")
+                //    3. 获取第2个li节点 *
+            var $2li = $("li:eq(1)") //$("li[title="xiaoqiao"]")这样也可以获取
+                //  4. 将第1个li节点添加为ul父节点的最后一个子节点 
+            $ul.append($li) // 父元素.append($变量)
+                //5. 将第2个li节点追加为ul父节点的第一个子节点 
+            $ul.prepend($li2) //父元素.prepend(变量)
+                //6 最后一个元素之后添加$li_3
+            $("li:last").after($li3); //兄弟元素.before(xxx) 添加在兄弟元素之前  after反之
+        }
     </script>
 </head>
 
@@ -978,10 +1101,10 @@ function fn(){
 
 - 语法
 
-| API方法  | 解释                     |
-| -------- | ------------------------ |
-| remove() | 删除指定元素             |
-| empty()  | 清空指定元素的所有子元素 |
+| API方法  | 解释                       |
+| -------- | -------------------------- |
+| remove() | 删除指定元素，谁调用谁删除 |
+| empty()  | 清空指定元素的所有子元素   |
 
 - 代码
 
@@ -1035,7 +1158,7 @@ for(var i=0;i<元素数组.length;i++){
 <head>
     <meta charset="UTF-8">
     <title></title>
-    <script src="jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
         $(function () {
             var $lis = $("#city li");
@@ -1079,14 +1202,23 @@ jquery对象.each(function(index,element){});
 <head>
     <meta charset="UTF-8">
     <title></title>
-    <script src="jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
-        $(function () {
+    </script>
+    <script>
+        $(function() {
             var $lis = $("#city li");
-            $lis.each(function (index, element) {
+            $lis.each(function(index, element) {
                 alert(index + "--" + $(element).html());
             });
-        });
+
+            $("#btn").click(function() {
+                $("li").each(function(index, element) {
+                    var liVal = $(element).html();
+                    alert(liVal);
+                })
+            })
+        })
     </script>
 </head>
 
@@ -1096,7 +1228,10 @@ jquery对象.each(function(index,element){});
         <li>上海</li>
         <li>天津</li>
         <li>重庆</li>
+
     </ul>
+    <hr>
+    <input type="button" value="遍历" id="btn">
 </body>
 
 </html>
@@ -1206,11 +1341,11 @@ for(变量 of jquery对象){
 
 - 方法
 
-  | 方法名称                      | 解释                                         |
-  | ----------------------------- | -------------------------------------------- |
-  | show([speed,[easing],[fn]])   | 显示元素方法                                 |
-  | hide([speed,[easing],[fn]])   | 隐藏元素方法                                 |
-  | toggle([speed],[easing],[fn]) | 切换元素方法，显示的使之隐藏，隐藏的使之显示 |
+  | 方法名称                      | 解释                                                         |
+  | ----------------------------- | ------------------------------------------------------------ |
+  | show([speed,[easing],[fn]])   | 显示元素方法(速度，展现方式，函数)                           |
+  | hide([speed,[easing],[fn]])   | 隐藏元素方法(速度，展现方式，函数)                           |
+  | toggle([speed],[easing],[fn]) | 切换元素方法，显示的使之隐藏，隐藏的使之显示(速度，展现方式，函数) |
 
 - 参数
 
@@ -1232,24 +1367,35 @@ for(变量 of jquery对象){
       <title>jQuery的动画显示与隐藏</title>
       <script src="js/jquery-3.5.1.js"></script>
       <script>
-  //1.需求1:点击显示,将div展示出来
-  //2.需求2:点击隐藏,将div隐藏起来
-  //3.需求3:点击切换,隐藏和显示效果切换
+          //1.需求1:点击显示,将div展示出来
+          function fn1() {
+              //show(速度，展现方式，函数)
+              $("div").show(200, "linear", function() {
+                  alert("已显示")
+              })
+          }
+          //2.需求2:点击隐藏,将div隐藏起来
+          function fn2() {
+              $("div").hide(2000, "swing")
+          }
+          //3.需求3:点击切换,隐藏和显示效果切换
+          function fn3() {
+              $("div").toggle(2000)
+          }
       </script>
   </head>
-  
+
   <body>
       <input type="button" value="显示" onclick="fn1()">
       <input type="button" value="隐藏" onclick="fn2()">
       <input type="button" value="切换" onclick="fn3()">
       <hr>
-      <div style="width: 200px;height: 200px; background-color: yellow; border: 1px solid
-  red; display: none;"></div>
+      <div style="width: 200px;height: 200px; background-color: yellow; border: 1px solid red; display: none;"></div>
   </body>
   
   </html>
   ```
-
+  
   
 
 ####  滑动效果 
@@ -1314,7 +1460,12 @@ for(变量 of jquery对象){
     <script src="js/jquery-3.5.1.js">
     </script>
     <script>
-//需求:使用链式编程,给p标签设置字体颜色为红色,向上滑动效果,向下滑动效果
+        //需求:使用链式编程,给p标签设置字体颜色为红色,向上滑动效果,向下滑动效果
+        $(function() {
+            $("button").click(function() {
+                $("p").css("color", "red").slideUp(2000).slideDown(2000);
+            })
+        })
     </script>
 </head>
 
@@ -1337,10 +1488,12 @@ for(变量 of jquery对象){
     
     ```
 
-  -  必需的 params 参数定义形成动画的 CSS 属性。 可选的 speed 参数规定效果的时长 。它可以取以下 值："slow"、"fast" 或毫秒。 可选的 callback 参数是动画完成后所执行的函数名称。 
+    - 必需的 params 参数定义形成动画的 CSS 属性。 
+  - 可选的 speed 参数规定效果的时长 。它可以取以下 值："slow"、"fast" 或毫秒。
+    -  可选的 callback 参数是动画完成后所执行的函数名称。 
 
   - 需求:使用animate实现div高度变为300px ,透明度opacity 0.4, 宽度变为400px,透明度opacity 0.6 , 向右移动 300px, 再向下移动300px,弹出框提示动画演示结束.  
-
+  
     ```html
     <!DOCTYPE html>
     <html>
@@ -1351,9 +1504,28 @@ for(变量 of jquery对象){
         <script type="text/javascript" src="js/jquery-3.5.1.js"></script>
         <script>
             /*
-            需求:使用animate实现div高度变为300px ,透明度opacity 0.4, 宽度变为400px,透明度
-            opacity 0.6 , 向右移动300px, 再向下移动300px,弹出框提示动画演示结束.
-            */
+                            需求:使用animate实现div高度变为300px ,透明度opacity 0.4, 宽度变为400px,透明度
+                            opacity 0.6 , 向右移动300px, 再向下移动300px,弹出框提示动画演示结束.
+                            */
+    
+            $(function() {
+                $("button").click(function() {
+                    $("div").animate({
+                            height: "300px",
+                            opacity: "0.4"
+                        }, "slow").animate({
+                            width: "400px",
+                            opacity: "0.6"
+                      }, "slow").animate({
+                            left: "300px" //距离左边框300px
+                      }, "slow").animate({
+                            top: "300px"
+                        }, "slow"),
+                        function() {
+                            alert("展示结束")
+                        }
+                })
+            })
         </script>
     </head>
     
@@ -1365,7 +1537,7 @@ for(变量 of jquery对象){
     
     </html>
     ```
-
+    
     
 
 ### 7 jQuery应用 
@@ -1476,4 +1648,77 @@ for(变量 of jquery对象){
     }
     ```
 
+    代码
+    
+    ```html
+    <html>
+    
+    <head>
+        <meta charset="utf-8">
+        <title>弹幕案例</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/jquery-3.5.1.js"></script>
+        <script>
+            // 需求：点击发射按钮或回车，把文本框的消息发送到页面中
+            $(function() {
+                    //1.点击发射按钮，发送弹幕
+                    $("#btn").click(function() {
+                            danmu();
+                        })
+                        //2.点击回车发送弹幕
+                    $("#text").keyup(function(e) {
+    
+                        if (e.keyCode == 13) {
+                            danmu();
+                        }
+                    })
+                })
+                //3.生成弹幕
+            function danmu() {
+                //1.定义一个数组，存放不同的颜色单词
+                var colors = ["red", "greed", "orange", "pink"]
+                    //2.随机挑选一个颜色
+                var randomColor = parseInt(Math.random() * colors.length)
+                    //3.获取高度(随机高度650)
+                var randomY = parseFloat(Math.random()) * 650
+                    //4.生成一个span，代表弹幕
+                var $span = $("<span></span>")
+                    //4.1 链式编程，设置文本内容
+                    .text($("#text").val())
+                    //4.2设置弹幕颜色
+                    .css("color", colors[randomColor])
+                    //4.3设置弹幕位置
+                    .css("left", 1400)
+                    //4.4设置高度(弹幕高度随机)
+                    .css("top", randomY)
+                    //4.5设计自定义动画animate，让span从右向左移动，用过花费10s，移动到最左侧消失
+                    .animate({
+                        left: -500
+                    }),
+                    10000,
+                    "linear",
+                    function() {
+                        $(this).remove
+                    }
+                    //5.将生成的span添加到boxdom的div中
+                $("#boxDom").append($span);
+            }
+        </script>
+    </head>
+    
+    <body>
+        <div class="boxDom" id="boxDom">
+            <div class="idDom" id="idDom">
+                <div class="content">
+                    <p class="title">弹幕:</p>
+                    <input type="text" class="text" id="text" />
+                    <button type="button" class="btn" id="btn">发射</button>
+                </div>
+            </div>
+        </div>
+    </body>
+    
+    </html>
+    ```
+    
     
