@@ -575,34 +575,60 @@
 -  转换代码实现 
 
   ```java
+  package com.bigdatalearn.web;
+  
+  
   import com.fasterxml.jackson.core.JsonProcessingException;
   import com.fasterxml.jackson.databind.ObjectMapper;
   
-  public class JacksonDemo {
+  import java.util.*;
+  
+  /**
+   * jackson的常用方法：
+   * ObjectMapper对象，可以将Java对象转成json
+   * writeValueAsString（java对象） ===> 返回值是一个json
+   *
+   * @JsonIgnore 生成json时忽略指定属性
+   * @JsonFormat(pattern = "YYYY-MM-dd")  日志类型转换为指定格式
+   */
+  
+  public class JackSonDemo {
       public static void main(String[] args) throws JsonProcessingException {
-          //创建User对象
-          User user = new User();
-          user.setId("100");
-          user.setUsername("haohao");
-          user.setAge(33);
-          //创建List集合
-          List<String> arr = new ArrayList<>();
-          arr.add("aaa");
-          arr.add("bbbb");
-          arr.add("ccccc");
-          //创建Map集合
+          method();
+          method1();
+          // 将Map类型数据转换成json
           Map<String, User> map = new HashMap<>();
-          map.put("user", user);
-          //转换
+          map.put("n1", new User("a", 20, new Date(), "北京"));
+          map.put("n2", new User("b", 20, new Date(), "北京"));
+          map.put("n3", new User("c", 20, new Date(), "北京"));
           ObjectMapper om = new ObjectMapper();
-          String userJson = om.writeValueAsString(user);
-          String arrJson = om.writeValueAsString(arr);
           String mapJson = om.writeValueAsString(map);
-          System.out.println(userJson);
-          System.out.println(arrJson);
           System.out.println(mapJson);
       }
+  
+      private static void method1() throws JsonProcessingException {
+          // 将List类型数据转换成json
+          List<User> list = new ArrayList<>();
+          list.add(new User("a", 20, new Date(), "北京"));
+          list.add(new User("b", 20, new Date(), "北京"));
+          list.add(new User("c", 20, new Date(), "北京"));
+          ObjectMapper om = new ObjectMapper();
+          String listJson = om.writeValueAsString(list);
+          System.out.println(listJson);
+      }
+  
+      private static void method() throws JsonProcessingException {
+          //需求：将user对象转成json串
+          User user = new User("老王", 30, new Date(), "北京");
+          // 创建jackson的核心对象
+          ObjectMapper om = new ObjectMapper();
+          // 调用writeValueAsString 将user对象转换成json
+          String jsonObj = om.writeValueAsString(user);
+          System.out.println(jsonObj);
+      }
+  
   }
+  
   ```
 
 ### 5  综合案例 
@@ -621,262 +647,269 @@
 
 数据库: mysql  
 
+![](./picture/day31/后台逻辑.png)
+
 #####  代码实现 
 
--  数据库SQL 
+数据库SQL 
 
-  ```mysql
-  #创建user表
-  CREATE TABLE USER (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  username VARCHAR(32),
-  PASSWORD VARCHAR(32)
-  );
-  INSERT INTO USER VALUES(NULL,'zhangsan','123');
-  INSERT INTO USER VALUES(NULL,'lisi','123');
-  INSERT INTO USER VALUES(NULL,'wangwu','123');
-  
-  ```
+```mysql
+#创建user表
+CREATE TABLE USER (
+id INT PRIMARY KEY AUTO_INCREMENT,
+username VARCHAR(32),
+PASSWORD VARCHAR(32)
+);
+INSERT INTO USER VALUES(NULL,'zhangsan','123');
+INSERT INTO USER VALUES(NULL,'lisi','123');
+INSERT INTO USER VALUES(NULL,'wangwu','123');
 
--  c3p0-config.xml配置文件 
+```
 
-  ```xml
-  <?xml version="1.0" encoding="UTF-8"?>
-  <c3p0-config>
-      <default-config>
-          <property name="driverClass">com.mysql.jdbc.Driver</property>
-          <property name="jdbcUrl">jdbc:mysql://localhost:3306/ajax_project</property>
-          <property name="user">root</property>
-          <property name="password">123</property>
-      </default-config>
-  </c3p0-config>
-  ```
+c3p0-config.xml配置文件 
 
--  JDBCUtils 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<c3p0-config>
+    <default-config>
+        <property name="driverClass">com.mysql.jdbc.Driver</property>
+        <property name="jdbcUrl">jdbc:mysql://localhost:3306/test</property>
+        <property name="user">root</property>
+        <property name="password">mysql</property>
+    </default-config>test
+</c3p0-config>
+```
 
-  ```java
-  
-  import javax.sql.DataSource;
-  import java.sql.Connection;
-  import java.sql.SQLException;
-  
-  public class JDBCUtils {
-      private static DataSource dataSource = new ComboPooledDataSource();
-  
-      //1.获取连接池对象
-      public static DataSource getDataSource() {
-          return dataSource;
-      }
-  
-      //2.获取连接对象
-      public static Connection getConnection() throws SQLException {
-          return dataSource.getConnection();
-      }
-  }
-  
-  ```
+JDBCUtils 
 
--  User实体类 
+```java
+package com.bigdatalearn.util;
 
-  ```java
-  public class User {
-      private int id;
-      private String username;
-      private String password;
-  
-      public User() {
-      }
-  
-      public User(int id, String username, String password) {
-          this.id = id;
-          this.username = username;
-          this.password = password;
-      }
-  
-      public int getId() {
-          return id;
-      }
-  
-      public void setId(int id) {
-          this.id = id;
-      }
-  
-      public String getUsername() {
-          return username;
-      }
-  
-      public void setUsername(String username) {
-          this.username = username;
-      }
-  
-      public String getPassword() {
-          return password;
-      }
-  
-      public void setPassword(String password) {
-          this.password = password;
-      }
-  
-      @Override
-      public String toString() {
-          return "User{" +
-                  "id=" + id +
-                  ", username='" + username + '\'' +
-                  ", password='" + password + '\'' +
-                  '}';
-      }
-  }
-  
-  ```
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 
--  UserMapper接口 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-  ```java
-  import java.sql.SQLException;
-  
-  public interface UserMapper {
-      //根据用户名查找数据库中是否有该用户
-  // int 0 没查到 1查到了
-      public long queryUserByName(String username) throws SQLException;
-  }
-  
-  ```
+/**
+ * 通过该工具可以获取连接对象和连接池对象
+ */
 
--  UserService接口和实现类 
+public class JDBCUtils {
 
-  ```java
-  接口
-  
-  public interface UserService {
-      //根据name查询用户
-      public long findUserByName(String username) throws SQLException, IOException;
-  }
-  实现类
-          package com.itheima.service;
-          import com.itheima.mapper.UserMapper;
-          import org.apache.ibatis.io.Resources;
-          import org.apache.ibatis.session.SqlSession;
-          import org.apache.ibatis.session.SqlSessionFactory;
-          import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-          import java.io.IOException;
-          import java.io.InputStream;
-          import java.sql.SQLException;
-  
-  public class UserServiceImpl implements UserService {
-      private UserMapper userMapper;
-  
-      @Override
-      public long findUserByName(String username) throws SQLException, IOException {
-          SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
-          InputStream inputStream = Resources.getResourceAsStream("SqlMapConfig.xml");
-          SqlSessionFactory build = builder.build(inputStream);
-          SqlSession sqlSession = build.openSession();
-          UserMapper mapper = sqlSession.getMapper(UserMapper.class);
-          long count = mapper.queryUserByName(username);
-          return count;
-      }
-  }
-  ```
+    //创建c3p0连接池
+    private static DataSource dataSource = new ComboPooledDataSource();
 
-  
+    // 提供一个方法返回连接池
+    public static DataSource getDataSource() {
+        return dataSource;
+    }
 
--  QueryAllServlet 
+    // 提供一个Connection的连接对象
+    public static Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+}
 
-  ```java
-  import com.itheima.service.UserService;
-  import com.itheima.service.UserServiceImpl;
-  
-  import javax.servlet.ServletException;
-  import javax.servlet.annotation.WebServlet;
-  import javax.servlet.http.HttpServlet;
-  import javax.servlet.http.HttpServletRequest;
-  import javax.servlet.http.HttpServletResponse;
-  import java.io.IOException;
-  import java.sql.SQLException;
-  
-  @WebServlet("/QueryServlet")
-  public class QueryServlet extends HttpServlet {
-      protected void doPost(HttpServletRequest request, HttpServletResponse response)
-              throws ServletException, IOException {
-          /**
-           * 1.编码设置
-           * 2.接收参数用户名
-           * 3.创建service,并代用service的查询方法 ==> int count (1/0)
-           * 4.直接将返回的count写到回调函数的data中
-           */
-          try {
-              //1.编码设置
-              request.setCharacterEncoding("UTF-8");
-              response.setContentType("text/html;charset=utf-8");
-              //2.接收参数用户名
-              String username = request.getParameter("username");
-              //3.创建service,并代用service的查询方法 ==> int count (1/0)
-              UserService service = new UserServiceImpl();
-              long count = service.findUserByName(username);
-              //4.直接将返回的count写到回调函数的data中
-              response.getWriter().print(count);
-          } catch (SQLException e) {
-              e.printStackTrace();
-          }
-      }
-  
-      protected void doGet(HttpServletRequest request, HttpServletResponse response)
-              throws ServletException, IOException {
-          doPost(request, response);
-      }
-  }
-  
-  ```
+```
 
--  register.html页面 
+检查用户是否存在
 
-  ```html
-  <!DOCTYPE html>
-  <html lang="en">
-  
-  <head>
-      <meta charset="UTF-8">
-      <title>Title</title>
-      <script src="js/jquery-3.3.1.js"></script>
-      <script>
-          /**
-           * 前台的思路:
-           * 1.页面加载
-           * 2.获取用户名输入框的jQuery对象,派发一个失去关标的事件 blur,绑定一个函数
-           * 3.blur函数中获取输入用户名
-           * 4.发送ajax请求到后台
-           * 5.未完待续: 回调函数中做判断...
-           */
-          //1.页面加载
-          $(function() {
-              //2.获取用户名输入框的jQuery对象,派发一个失去关标的事件 blur,绑定一个函数
-              $("#name").blur(function() {
-                  //3.blur函数中获取输入用户名
-                  var username = $("#name").val();
-                  //4.发送ajax请求到后台
-                  //第一个参数: url 第二个参数: 发送给后台的username 第三个参数 回调函数 第四个
-                  参数: 返回数据类型
-                  $.post("/day17_project/QueryServlet", "username=" + username, function(data) {
-                      //alert(data); //data 可能是0 代表用户名可以使用, 可能是1,已经被注册
-                      if (data >= 1) { //用户已经存在,不能使用该用户名
-                          $("#msg").html("<font color='red'>用户名已经存在,请更换</font>")
-                      } else { //用户不存在,可以使用该用户名
-                          $("#msg").html("<font color='green'>用户名可以使用</font>")
-                      }
-                  }, "text")
-              })
-          })
-      </script>
-  </head>
-  
-  <body>
-      <h1>会员注册</h1>
-      用户名<input type="text" name="username" id="name" /><span id="msg"></span><br /> 密码
-      <input type="password" name="password" id="pwd" /><br />
-      <input type="button" id="btn" value="注册" />
-  </body>
-  
-  </html>
-  ```
+```java
+import com.bigdatalearn.util.JDBCUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 
-  
+import javax.sql.DataSource;
+import java.sql.SQLException;
+
+public class CheckDao {
+
+    // 检查用户名是否存在
+    public boolean daoCheck(String name) throws SQLException {
+
+        // 1.获取连接池DataSource对象
+        DataSource dataSource = JDBCUtils.getDataSource();
+
+        // 2.使用DBYtils
+        QueryRunner queryRunner = new QueryRunner(dataSource);
+
+        //3. 查询操作
+        Long count = (Long) queryRunner.query("select count(*) from USER where username = ? ", new ScalarHandler(), name);
+
+        // 4.如果查到了 count>=1
+        return count >= 1;
+    }
+
+}
+```
+
+
+
+```java
+import com.bigdatalearn.util.JDBCUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
+
+public class CheckDao {
+
+    // 检查用户名是否存在
+    public boolean daoCheck(String name) throws SQLException {
+
+        // 1.获取连接池DataSource对象
+        DataSource dataSource = JDBCUtils.getDataSource();
+
+        // 2.使用DBYtils
+        QueryRunner queryRunner = new QueryRunner(dataSource);
+
+        //3. 查询操作
+        Long count = (Long) queryRunner.query("select count(*) from USER where username = ? ", new ScalarHandler(), name);
+
+        // 4.如果查到了 count>=1
+        return count >= 1;
+    }
+
+}
+```
+
+
+
+```java
+
+import com.bigdatalearn.dao.CheckDao;
+
+import java.sql.SQLException;
+
+public class CheckService {
+    //检查用户是否存在的check方法
+    public boolean check(String name) throws SQLException {
+        return new CheckDao().daoCheck(name);
+    }
+}
+
+```
+
+
+
+```java
+package com.bigdatalearn.web;
+
+import com.bigdatalearn.service.CheckService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+@WebServlet("/CheckServlet")
+public class CheckServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doPost(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        try {
+            //1.设置编码
+            req.setCharacterEncoding("UTF-8");
+            resp.setContentType("text/html;charset=utf-8");
+
+            //2.获取前台参数 username
+            String username = req.getParameter("username");
+
+            //3.调用service的check方法得到一个boolean值
+            boolean flag = new CheckService().check(username);
+
+            //4.创建一个Map对象，给map中设置内容
+            Map<String, Object> map = new HashMap<String, Object>();
+
+            if (flag) {
+                map.put("isExist", true);
+                map.put("msg", "该用户已经存在");
+            } else {
+                map.put("isExist", true);
+                map.put("msg", "该用户可以使用");
+            }
+
+            // 5.map转成json返回给前台
+            ObjectMapper om = new ObjectMapper();
+            String mapJson = om.writeValueAsString(map);
+
+            //6.json数据返回给前台
+            resp.getWriter().println(mapJson);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+
+```
+
+
+
+register.html页面 
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+    <script src="js/jquery-3.5.1.js"></script>
+
+    <script>
+        /**
+         * 需求 当用户名输入框失去光标，发送ajax请求查询后台，判断用户是否已经存在，最后提示
+         * 前台的思路:
+         * 1.页面加载
+         * 2.获取用户名输入框的jQuery对象,派发一个失去关标的事件 blur,绑定一个函数
+         * 3.blur函数中获取输入用户名
+         * 4.发送ajax请求到后台
+         * 5.未完待续: 回调函数中做判断...
+         */
+        $(function () {
+            //1.获取用户名输入框的jQuery对象,派发一个失去关标的事件 blur,绑定一个函数
+            $("#uid").blur(function () {
+                //2.blur函数中获取输入用户名
+                var username = $("#uid").val();
+                //3.发送ajax，传递用户名参数
+                //第一个参数: url 第二个参数: 发送给后台的username 第三个参数 回调函数 第四个参数: 返回数据类型
+                $.post("/J/CheckServlet", {"username": username}, function (data) {
+                    // 4.判断isExist 如果为true ，用户存在，msg设置为红色，放到span里面
+                    if (data.isExist) {
+                        //不能使用
+                        $("#uid_msg").css("color", "red").html(data.msg);
+                    } else {
+                        //能使用
+                        $("#uid_msg").css("color", "green").html(data.msg);
+                    }
+
+                }, "json");
+            })
+        })
+    </script>
+</head>
+<body>
+<input type="text" name="username" id="uid" placeholder="请输入用户名">
+<span id="uid_msg"></span>
+<br>
+<input type="text" name="password" id="ipwd" placeholder="请输入密码">
+<br>
+<input type="submit" value="注册">
+</body>
+</html>
+```
+

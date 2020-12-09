@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+    <script src="js/jquery-3.5.1.js"></script>
+
+    <script>
+        /**
+         * 需求 当用户名输入框失去光标，发送ajax请求查询后台，判断用户是否已经存在，最后提示
+         * 前台的思路:
+         * 1.页面加载
+         * 2.获取用户名输入框的jQuery对象,派发一个失去关标的事件 blur,绑定一个函数
+         * 3.blur函数中获取输入用户名
+         * 4.发送ajax请求到后台
+         * 5.未完待续: 回调函数中做判断...
+         */
+        $(function () {
+            //1.获取用户名输入框的jQuery对象,派发一个失去关标的事件 blur,绑定一个函数
+            $("#uid").blur(function () {
+                //2.blur函数中获取输入用户名
+                var username = $("#uid").val();
+                //3.发送ajax，传递用户名参数
+                //第一个参数: url 第二个参数: 发送给后台的username 第三个参数 回调函数 第四个参数: 返回数据类型
+                $.post("/J/CheckServlet", {"username": username}, function (data) {
+                    // 4.判断isExist 如果为true ，用户存在，msg设置为红色，放到span里面
+                    if (data.isExist) {
+                        //不能使用
+                        $("#uid_msg").css("color", "red").html(data.msg);
+                    } else {
+                        //能使用
+                        $("#uid_msg").css("color", "green").html(data.msg);
+                    }
+
+                }, "json");
+            })
+        })
+    </script>
+</head>
+<body>
+<input type="text" name="username" id="uid" placeholder="请输入用户名">
+<span id="uid_msg"></span>
+<br>
+<input type="text" name="password" id="ipwd" placeholder="请输入密码">
+<br>
+<input type="submit" value="注册">
+</body>
+</html>
