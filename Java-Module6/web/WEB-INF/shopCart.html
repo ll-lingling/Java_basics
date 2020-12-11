@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+
+    <div id="app" v-cloak>
+        <template v-if="list.length">
+            <table border="1px" width="50%" heigh="450px" align="center" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>书籍名称</th>
+                        <th>出版日期</th>
+                        <th>价格</th>
+                        <th>购买数量</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item,index) in list" align="center">
+                        <td>{{index+1}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.time}}</td>
+                        <td>{{item.price}}</td>
+                        <td>
+                            <!-- 此处count为1时，动态绑定disabled特性禁用 -->
+                            <button @click="handleReduce(index)" :disabled="item.count===1">-</button>
+                            {{item.count}}
+                            <button @click="handleAdd(index)">+</button>
+                        </td>
+                        <td>
+                            <button @click="handleRemove(index)">移除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <div align="center">总价：￥ {{totalPrice}}</div>
+        </template>
+        <div v-else>购物车为空!</div>
+    </div>
+</body>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            list: [{
+                id: 1,
+                name: '《java编程思想》',
+                time: '2020-9',
+                price: 98.00,
+                count: 1
+            }, {
+                id: 2,
+                name: '《数据分析与数据原理》',
+                time: '2019-2',
+                price: 39.00,
+                count: 1
+            }, {
+                id: 3,
+                name: '《Hadoop权威指南》',
+                time: '2019-10',
+                price: 59.00,
+                count: 1
+            }, {
+                id: 4,
+                name: '《代码大全》',
+                time: '2018-8',
+                price: 128.00,
+                count: 1
+            }]
+        },
+        methods: {
+            // 虽然在button上已经绑定了disabled，但是在handleReduce内又判断了一遍，这是因为在某些时候可能不用button元素，这时给它们增加disabled是没有任何作用的
+            handleReduce: function(index) {
+                if (this.list[index].count === 1) return;
+                this.list[index].count--;
+            },
+            handleAdd: function(index) {
+                this.list[index].count++;
+            },
+            handleRemove: function(index) {
+                this.list.splice(index, 1);
+            }
+        },
+        computed: {
+            totalPrice: function() {
+                var total = 0;
+                for (var i = 0; i < this.list.length; i++) {
+                    var item = this.list[i];
+                    total += item.price * item.count;
+                }
+                // 此处设定一个千位分隔符， 总价每隔3位数加进一个逗号
+                return total.toString().replace(/\B(?=(\d{3})+$)/g, ',')
+            }
+        }
+    })
+</script>
+
+</html>
