@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <!--
+    把QuickServlet交给tomcat管理
+    servlet-name：当前servlet的别名（使用类名即可）
+    servlet-class：全限定类名
+    -->
+    <servlet>
+        <servlet-name>QuickServlet</servlet-name>
+        <servlet-class>cn.itcast.a_quick.QuickServlet</servlet-class>
+    </servlet>
+    <!--
+    给servlet设置一个网络的访问地址（路径）
+    servlet-name：给指定别名的servlet配置映射
+    url-pattern：网络访问地址（注意：必须以/开头）
+    -->
+    <servlet-mapping>
+        <servlet-name>QuickServlet</servlet-name>
+        <url-pattern>/quickServlet</url-pattern>
+    </servlet-mapping>
+
+</web-app>
