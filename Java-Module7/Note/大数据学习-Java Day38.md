@@ -22,10 +22,11 @@
 
 #####  需求：编写filter对目标资源servlet进行拦截 
 
-1.  编写java类，实现filter接口 
+1. 编写java类，实现filter接口 
 
    ```java
    public class Demo implements Filter {
+       // 初始化方法
        @Override
        public void init(FilterConfig filterConfig) throws ServletException {
        }
@@ -43,7 +44,7 @@
            // 放行
            filterChain.doFilter(servletRequest, servletResponse);
        }
-   
+   	// 销毁方法
        @Override
        public void destroy() {
        }
@@ -80,6 +81,8 @@
 
 ![](./picture/day38/过滤器工作原理.png)
 
+![](./picture/day38/过滤器工作原理1.png)
+
 #### 使用细节
 
 ##### 生命周期
@@ -103,10 +106,13 @@ public void destroy();
 ```markdown
 * 创建
         服务器启动项目加载，创建filter对象，执行init方法（只执行一次）
+        
 * 运行（过滤拦截）
         用户访问被拦截目标资源时，执行doFilter方法
+        
 * 销毁
         服务器关闭项目卸载时，销毁filter对象，执行destroy方法（只执行一次）
+         
 * 补充：
         过滤器一定是优先于servlet创建的
 ```
@@ -142,7 +148,7 @@ public class Demo implements Filter {
 
 ##### 拦截路径
 
- 在开发时，我们可以指定过滤器的拦截路径来定义拦截目标资源的范围 
+ 在开发时，可以指定过滤器的拦截路径来定义拦截目标资源的范围 
 
 
 
@@ -252,11 +258,15 @@ public class Demo extends HttpServlet {
 ```java
 // @WebFilter("/*")
 public class Demo implements Filter {
+    
     private String encode="UTF-8";
+    
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws ServletException, IOException {
+        
         // 类型向下转型
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+        
         // 判断用户是否为post请求，才设置编码
         if (request.getMethod().equalsIgnoreCase("post")) {
             request.setCharacterEncoding(encode);
@@ -318,6 +328,7 @@ public class Demo implements Filter {
 
 ```java
 void contextDestroyed(ServletContextEvent sce) 监听servletcontext销毁
+    
 void contextInitialized(ServletContextEvent sce) 监听servletcontext创建
 ```
 
@@ -333,14 +344,15 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 public class Demo implements ServletContextListener {
+    
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        System.out.println("服务器启动，servletContext被创建了");
+        System.out.println("服务器启动，监听到servletContext对象被创建了");
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        System.out.println("服务器停止，servletContext被销毁了");
+        System.out.println("服务器停止，监听到servletContext对象被销毁了");
     }
 }
 ```
@@ -355,4 +367,4 @@ public class Demo implements ServletContextListener {
 
 HttpSessionListener：监听Httpsession域的创建于销毁的监听器 
 
-ServletRequestListener：监听ServletRequest域的创建于销毁的监听器 
+ServletRequestListener：监听ServletRequest域的创建于销毁的监听器  

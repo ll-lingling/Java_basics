@@ -450,13 +450,17 @@ public class Demo extends HttpServlet {
 ```markdown
 * 参数
         username=jack&password=123&hobby=drink&hobby=perm
+        
 * API
     1. 获取指定参数名的值 username=jack
             String getParameter(String name)
+            
     2. 获取指定参数名的值数组 hobby=drink&hobby=perm
             String[] getParameterValues(String name)
+            
     3. 获取所有参数名和对应值数组，参数名 name（key），值数组 value，封装map集合
             Map<String,String[]> getParameterMap()
+            
 * 中文乱码【重点】
     get：在tomcat8及以上版本，内部URL编码（UTF-8）
     post：编码解码不一致，造成乱码现象
@@ -508,14 +512,16 @@ public class Demo extends HttpServlet {
 public class Demo extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("手动获取---------");
+        System.out.println("手动获取---------");  // 获取表单提交的请求参数
         String username = req.getParameter("username");
         System.out.println("用户：" + username);
         String password = req.getParameter("password");
         System.out.println("密码：" + password);
+        // 获取爱好多个value的数组类型
         String[] hobby = req.getParameterValues("hobby");
         System.out.println("爱好：" + Arrays.toString(hobby));
         System.out.println("自动获取---------");
+        // 获取所有的请求参数的key和value String：表单中的name属性值  String[]:请求参数的value值
         Map<String, String[]> parameterMap = req.getParameterMap();
         parameterMap.forEach((k, v) -> {
             System.out.println(k + " = " + Arrays.toString(v));
@@ -541,16 +547,83 @@ public class Demo extends HttpServlet {
 ```markdown
 * API
     1. 通过reqeust对象，获得转发器对象
-            RequestDispatcher getRequestDispatcher(String path) //要跳转到的z	
+            RequestDispatcher getRequestDispatcher(String path) //要跳转到的资源路径
+            
    	2. 通过转发器对象，实现转发功能
             void forward(ServletRequest request, ServletResponse response)
+            
 * 请求转发特点
     浏览器：发了一次请求
-    地址栏：没有发生改变
+    地址栏：没有发生改变  
     只能转发到服务器内部资源....
+    
 * 链式编程
         request.getRequestDispatcher("/bServlet").forward(reqeust,response)
 ```
+
+
+
+```java
+
+public class AServlet extends HttpServlet {
+
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
+
+        System.out.println("AServlet中功能上执行了");
+
+        // 请求转发到Bservelt String path: 写的就是要跳转的资源路径
+    /*    // 1.获取到转发器对象
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("https://www.baidu.com/");
+
+        // 2.借助转发器对象进行真正的请求转发
+        requestDispatcher.forward(request,resp);*/
+
+        // 向request域中设置数据
+        request.setAttribute("hanbao","香辣鸡腿堡");
+
+        // 链式编程
+        request.getRequestDispatcher("/bServlet").forward(request,resp);
+
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req,resp);
+    }
+}
+
+```
+
+
+
+```java
+public class BServlet extends HttpServlet {
+
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        // 从request域中取出数据
+        String hanbao = (String) req.getAttribute("hanbao");
+        System.out.println(hanbao);
+
+        System.out.println("BServlet中功能下执行了");
+
+
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req,resp);
+    }
+}
+```
+
+
 
 ####  域对象（共享数据） 
 
@@ -690,7 +763,7 @@ public class BServlet extends HttpServlet {
         response.setStatus(302);
     // 2.设置响应头 Location
         response.setHeader("Location","重定向网络地址");
-* 方式二
+* 方式二  常用
     // 1.response这哥们封装专门处理重定向的方法
         response.sendRedirect("重定向网络地址");
 ```
@@ -710,41 +783,56 @@ public class BServlet extends HttpServlet {
 
 
 ```java
-@WebServlet("/AServlet")
-public class AServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse
-            response) throws ServletException, IOException {
-        this.doPost(request, response);
+
+public class CServlet extends HttpServlet {
+
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        System.out.println("访问到了CSerlvet,接下来重定向到DServlet");
+
+        // 设置重定向
+      /*  resp.setStatus(302);
+        resp.setHeader("Location","dServlet");*/
+
+        // 设置重定向 方式二：常用
+        resp.sendRedirect("https://www.lagou.com/");
+
+
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse
-            response) throws ServletException, IOException {
-        System.out.println("AServlet执行了....");
-        /* // 1.设置状态码
-        response.setStatus(302);
-        // 2.设置响应头 Location
-        response.setHeader("Location","/day10_response/BServlet");*/
-        // 1.response这哥们封装专门处理重定向的方法
-        response.sendRedirect("http://www.itcast.cn");
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
     }
 }
+
 ```
 
 
 
 ```java
-@WebServlet("/BServlet")
-public class BServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse
-            response) throws ServletException, IOException {
-        this.doPost(request, response);
+public class DServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        System.out.println("DServlet执行了.....");
+
+
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse
-            response) throws ServletException, IOException {
-        System.out.println("BServlet执行了....");
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
     }
+
+
 }
+
 ```
 
 
@@ -980,12 +1068,10 @@ public class Demo extends HttpServlet {
 ```java
 @WebServlet("/ContextPathServlet")
 public class Demo extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse
-            response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.doPost(request, response);
     }
-    protected void doPost(HttpServletRequest request, HttpServletResponse
-            response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 // 获取全局参数
         String value = request.getServletContext().getInitParameter("encode");
         System.out.println("全局配置参数："+value);
@@ -1032,28 +1118,46 @@ public class Demo extends HttpServlet {
 
 ```java
 @WebServlet(value = "/CountServlet", loadOnStartup = 4) // 服务器启动时，创建此servlet对象
-public class Demo extends HttpServlet {
+public class CountServlet extends HttpServlet {
+
+
     @Override
     public void init() throws ServletException {
-        getServletContext().setAttribute("count", 0);
+        // 向servletContext域中存入变量count,并且初始值为0
+        this.getServletContext().setAttribute("count",0);
     }
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        this.doPost(request, response);
-    }
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 设置response响应编码
-        response.setContentType("text/html;charset=utf-8");
-        response.getWriter().write("<h1>拉勾网站</h1>");
-        // 用户每次访问，从域中取出，加1，再存进去
-        ServletContext servletContext = request.getServletContext();
-        // 从域中取出
-        Integer count = (Integer) servletContext.getAttribute("count");
-        // 加1
+
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+       //1. 设置响应编码
+        resp.setContentType("text/html;charset=utf-8");
+
+       //2. 向页面响应信息
+        resp.getWriter().write("<h1>拉勾博客</h1>");
+
+
+        //3.进行servletContext域中的取值   取  加  存    0
+        // 取
+        Integer count = (Integer) this.getServletContext().getAttribute("count");
+
+        // 加
         count++;
-        // 再存进去
-        servletContext.setAttribute("count", count);
-        response.getWriter().write("<div>你是，第" + count + "位访问此网站... </div>");
+
+        resp.getWriter().write("<dev>你是，第"+ count + "位访问此网站的人....</dev>");
+
+        // 存
+        this.getServletContext().setAttribute("count",count);
+
+    }
+
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
     }
 }
+
 ```
 

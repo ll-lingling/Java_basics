@@ -188,7 +188,7 @@ public class EncodeCookie extends HttpServlet {
 }
 ```
 
-```ajva
+```java
 @WebServlet("/GetServlet")
 public class GetServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
