@@ -1,0 +1,14 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>bbs</title>
+</head>
+<body>
+<h3>LPL季后赛观看留言板</h3>
+<hr>
+<form action="${pageContext.request.contextPath}/WordsServlet" method="post">
+    <textarea name="content" id="" cols="30" rows="10"></textarea>
+    <input type="submit" value="请留言">
+</form>
+</body>
+</html>

@@ -3,24 +3,62 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
-
-    <!--
-    把QuickServlet交给tomcat管理
-    servlet-name：当前servlet的别名（使用类名即可）
-    servlet-class：全限定类名
-    -->
+    <!--    配置可访问的路由-->
+    <!-- 配置添加用户的路由   -->
     <servlet>
-        <servlet-name>QuickServlet</servlet-name>
-        <servlet-class>cn.itcast.a_quick.QuickServlet</servlet-class>
+        <servlet-name>AddStudent</servlet-name>
+        <servlet-class>com.service.AddStudent</servlet-class>
     </servlet>
-    <!--
-    给servlet设置一个网络的访问地址（路径）
-    servlet-name：给指定别名的servlet配置映射
-    url-pattern：网络访问地址（注意：必须以/开头）
-    -->
     <servlet-mapping>
-        <servlet-name>QuickServlet</servlet-name>
-        <url-pattern>/quickServlet</url-pattern>
+        <servlet-name>AddStudent</servlet-name>
+        <url-pattern>/addStudent</url-pattern>
     </servlet-mapping>
-
+    <!-- 配置登录的路由   -->
+    <servlet>
+        <servlet-name>Login</servlet-name>
+        <servlet-class>com.service.Login</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Login</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+    <!-- 配置注册的路由   -->
+    <servlet>
+        <servlet-name>Register</servlet-name>
+        <servlet-class>com.service.Register</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Register</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+    <!-- 配置用户列表的路由   -->
+    <servlet>
+        <servlet-name>ListStudent</servlet-name>
+        <servlet-class>com.service.ListStudent</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ListStudent</servlet-name>
+        <url-pattern>/listStudent</url-pattern>
+    </servlet-mapping>
+    <!-- 配置删除用户的路由   -->
+    <servlet>
+        <servlet-name>DeleteStudent</servlet-name>
+        <servlet-class>com.service.DeleteStudent</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteStudent</servlet-name>
+        <url-pattern>/deleteStudent</url-pattern>
+    </servlet-mapping>
+    <!-- 配置拦截器的路由  -->
+    <filter>
+        <filter-name>AddFilter</filter-name>
+        <filter-class>com.filter.AddFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AddFilter</filter-name>
+        <!--该拦截器的拦截路径 -->
+        <url-pattern>/deleteStudent</url-pattern> <!--拦截用户删除-->
+        <url-pattern>/addStudent</url-pattern>    <!--拦截用户添加-->
+    </filter-mapping>
 </web-app>
+

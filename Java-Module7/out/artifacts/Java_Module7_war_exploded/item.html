@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>学生信息</title>
+    <script src="resource/js/jquery-3.5.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="content">
+        <div style="margin-left: 20%; margin-top: 40px">
+            <button style="height: 30px; width: 80px" @click="add">添加</button>
+        </div>
+
+        <table style="margin-top: 20px" border="1px" width="60%" align="center" cellspacing="0px">
+            <tr>
+                <th>学号</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>出生日期</th>
+                <th>操作</th>
+            </tr>
+            <tr v-for="(student, index) in students" align="center" style="font-weight: bold; font-size: 18px">
+                <td>{{student.id}}</td>
+                <td>{{student.name}}</td>
+                <td>{{student.sex == 0 ? "男" : "女"}}</td>
+                <td>{{student.birthday}}</td>
+                <td><button @click="deleteStudent(student.id)">删除</button></td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+<script>
+    // 创建vue对象
+    new Vue({
+        el: "#content", // 挂载
+        data: {
+            students: [] // 学生信息列表
+        },
+        methods: {
+            // 点击添加按钮，跳转添加用户页面
+            add: function() {
+                window.location.href = "/student_item/add.html"
+            },
+            // 点击删除按钮，删除对应用户
+            deleteStudent: function(id) {
+                // post请求
+                $.post("/student_item/deleteStudent", { //请求参数
+                    "id": id
+                }, function(data) { // 响应回调函数
+                    var jsonData = JSON.parse(data); // json 解析
+                    var code = jsonData.code; // 消息类型
+                    if (code == 3) { // 未登录状态，跳转回登录页
+                        alert(jsonData.msg);
+                        window.location.href = "/student_item/index.html"
+                    } else { // 登录状态，删除后重新加载本页面
+                        alert(jsonData.msg);
+                        window.location.reload();
+                    }
+                })
+            }
+        },
+        // 挂载后执行，发送请求
+        mounted() { // 页面加载就请求用户列表数据
+            var t = this;
+            // get请求，获取用户列表
+            $.get("/student_item/listStudent", {},
+                function(data) {
+                    var jsonData = JSON.parse(data); // json解析
+                    var students = jsonData.data; // 返回的数据
+                    t.students = students; // 赋值，其通过v-model和页面进行了双向通讯
+                })
+        }
+    })
+</script>
+
+</html>

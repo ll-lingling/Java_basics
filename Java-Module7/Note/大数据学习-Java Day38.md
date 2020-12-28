@@ -65,7 +65,7 @@
        <!--注册filter-->
        <filter>
            <filter-name>QuickFilter</filter-name>
-           <filter-class>com.bigdata.Demo</filter-class>
+           <filter-class>com.demo.Demo</filter-class>
        </filter>
        <!--配置filter拦截路径-->
        <filter-mapping>
@@ -284,7 +284,7 @@ public class Demo implements Filter {
     <!--统一网站编码-->
     <filter>
         <filter-name>EncodeFilter</filter-name>
-        <filter-class>com.bigdata.Demo</filter-class>
+        <filter-class>com.demo.Demo</filter-class>
         <init-param>
             <param-name>encode</param-name>
             <param-value>UTF-8</param-value>
@@ -359,7 +359,7 @@ public class Demo implements ServletContextListener {
 
 ```xml
     <listener>
-        <listener-class>com.bigdata.Demo</listenerclass>
+        <listener-class>com.demo.Demo</listenerclass>
     </listener>
 ```
 

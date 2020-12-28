@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>添加学生信息</title>
+    <!--    导入jquery和vue包-->
+    <script src="resourcejs/jquery-3.5.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!--    配置界面样式-->
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        
+        #top {
+            width: 100%;
+            height: 500px;
+            background-color: lightseagreen;
+        }
+        
+        #content {
+            height: 500px;
+            width: 700px;
+            border: dimgray 1px solid;
+            background-color: white;
+            float: left;
+            margin-left: 30%;
+            margin-top: 200px;
+        }
+        
+        .tx {
+            height: 30px;
+            width: 300px;
+            margin-left: 30px;
+        }
+        
+        #name {
+            margin-left: 140px;
+            margin-top: 60px;
+        }
+        
+        #password {
+            margin-left: 156px;
+            margin-top: 40px;
+        }
+        
+        #birthday {
+            margin-left: 125px;
+            margin-top: 40px;
+        }
+        
+        #sex {
+            margin-left: 156px;
+            margin-top: 40px;
+        }
+        
+        #but {
+            margin-left: 260px;
+            margin-top: 40px;
+        }
+        
+        #login {
+            width: 200px;
+            height: 40px;
+            background-color: darkseagreen;
+        }
+        
+        #reg {
+            margin-left: 20px;
+            width: 200px;
+            height: 40px;
+            background-color: dodgerblue;
+        }
+        
+        p {
+            color: red;
+            margin-left: 150px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+
+        <div id="name">
+            用户名 <input class="tx" type="text" name="name" placeholder="请输入用户名" v-model="name" @blur="isEmpty" />
+        </div>
+
+        <div id="password">
+            密码 <input class="tx" type="password" name="password" placeholder="请输入密码" v-model="password" @blur="isEmpty" />
+        </div>
+
+        <div id="sex">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="radio" name="sex" checked="checked" v-model="sex" value=0 />男 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="radio" name="sex" v-model="sex" value=1 />女
+        </div>
+
+        <div id="birthday">
+            出生日期 <input class="tx" type="text" name="birthday" placeholder="请输入出生日期" v-model="birthday" @blur="isEmpty" />
+        </div>
+
+        <div id="but">
+            <input :disabled="flag" id="login" type="submit" value="添加" @click="add" />
+        </div>
+
+    </div>
+    <div id="top"></div>
+</body>
+<script>
+    // vue框架
+    new Vue({
+        el: "#content", // 挂载
+        data: { // 使用 v-model 和页面双向通讯
+            flag: true, // 添加按钮是否可点击
+            name: "", // 用户名
+            password: "", // 密码
+            sex: 0, // 性别 0男 1女
+            birthday: "" // 出生日期
+        },
+        methods: {
+            isEmpty: function() {
+                // 用来配置添加按钮的disabled属性，防止信息未输入全就添加
+                if (this.name != "" && this.password != "" && this.birthday != "") {
+                    this.flag = false;
+                } else {
+                    this.flag = true
+                }
+            },
+            // 点击添加按钮
+            add: function() {
+                var t = this; // 复制vue对象，在ajax中的this不再是vue的this
+                // post 请求服务器添加用户
+                $.post("/student_item/addStudent", { // 请求参数
+                    name: this.name,
+                    password: this.password,
+                    sex: this.sex,
+                    birthday: this.birthday
+                }, function(data) { // 响应回调函数
+                    var jsonData = JSON.parse(data); // 解析json
+                    var code = jsonData.code; // 消息类型
+                    if (code == 0) { // 判断是否添加成功
+                        alert(jsonData.msg) // 弹框
+                    } else if (code == 1) { // 添加成功，跳转列表页
+                        window.location.href = "/student_item/item.html"
+                    } else { // 未登录状态，跳转回登录页
+                        alert(jsonData.msg);
+                        window.location.href = "/student_item/index.html"
+                    }
+                })
+            }
+        }
+    })
+</script>
+
+</html>

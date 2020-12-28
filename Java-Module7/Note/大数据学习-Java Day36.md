@@ -330,7 +330,7 @@ public void destroy();
     -->
     <servlet>
         <servlet-name>ServletDemo4</servlet-name>
-        <servlet-class>com.bigdata.QuickServlet</servlet-class>
+        <servlet-class>com.demo.QuickServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ServletDemo4</servlet-name>
@@ -344,7 +344,7 @@ public void destroy();
     -->
     <servlet>
         <servlet-name>ServletDemo5</servlet-name>
-        <servlet-class>com.bigdata.QuickServlet</servlet-class>
+        <servlet-class>com.demo.QuickServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ServletDemo5</servlet-name>
