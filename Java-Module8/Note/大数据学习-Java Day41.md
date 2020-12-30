@@ -446,3 +446,330 @@ public void testDelete() throws Exception {
     </delete>
 ```
 
+### 6  Mybatis核心文件概述 
+
+####  MyBatis核心配置文件层级关系 
+
+ MyBatis 的配置文件包含了会深深影响 MyBatis 行为的设置和属性信息。 
+
+配置文档的顶层结构如下： ![](./picture/day41/顶层结构.png)
+
+####  MyBatis常用配置解析 
+
+#####  environments标签 
+
+ 数据库环境的配置，支持多环境配置 
+
+![](./picture/day41/environments标签.png)
+
+```markdown
+1. 其中，事务管理器（transactionManager）类型有两种：
+    - JDBC：
+    	这个配置就是直接使用了JDBC 的提交和回滚设置，它依赖于从数据源得到的连接来管理事务作用域。
+    - MANAGED：
+        这个配置几乎没做什么。它从来不提交或回滚一个连接，而是让容器来管理事务的整个生命周期。
+        例如：mybatis与spring整合后，事务交给spring容器管理。
+2. 其中，数据源（dataSource）常用类型有三种：
+    - UNPOOLED：
+    	这个数据源的实现只是每次被请求时打开和关闭连接。
+    - POOLED：
+    	这种数据源的实现利用“池”的概念将 JDBC 连接对象组织起来。
+    - JNDI :
+        这个数据源实现是为了能在如 EJB 或应用服务器这类容器中使用，容器可以集中或在外部配置数据
+        源，然后放置一个 JNDI 上下文的数据源引用
+```
+
+#####  properties标签 
+
+ 实际开发中，习惯将数据源的配置信息单独抽取成一个properties文件，该标签可以加载额外配置的properties： 
+
+```properties
+jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql:///mybatis_db
+jdbc.username=root
+jdbc.password=root
+```
+
+![](./picture/day41/properties标签.png)
+
+#####  typeAliases标签  
+
+ 类型别名是为 Java 类型设置一个短的名字。 
+
+为了简化映射文件 Java 类型设置，mybatis框架为我们设置好的一些常用的类型的别名： 
+
+![](./picture/day41/typeAliases标签.png)
+
+ 配置typeAliases，为com.lagou.domain.User定义别名为user： 
+
+#####  mappers标签 
+
+ 该标签的作用是加载映射的，加载方式有如下几种： 
+
+```markdown
+1. 使用相对于类路径的资源引用，例如：
+	<mapper resource="org/mybatis/builder/userMapper.xml"/>
+	
+2. 使用完全限定资源定位符（URL），例如：
+	<mapper url="file:///var/mappers/userMapper.xml"/>
+	
+《下面两种mapper代理开发中使用:暂时了解》
+
+3. 使用映射器接口实现类的完全限定类名，例如：
+	<mapper class="org.mybatis.builder.userMapper"/>
+	
+4. 将包内的映射器接口实现全部注册为映射器，例如：
+	<package name="org.mybatis.builder"/>
+```
+
+####  小结 
+
+ 核心配置文件常用配置： 
+
+properties标签：该标签可以加载外部的properties文件 
+
+```xml
+<properties resource="jdbc.properties"></properties>
+```
+
+typeAliases标签：设置类型别名 
+
+```xml
+<typeAlias type="com.lagou.domain.User" alias="user"></typeAlias>
+```
+
+mappers标签：加载映射配置 
+
+```xml
+<mapper resource="com/lagou/mapper/UserMapping.xml"></mapper>
+```
+
+environments标签：数据源环境配置  
+
+```xml
+<environments default="development">
+    <environment id="development">
+        <transactionManager type="JDBC"/>
+        <dataSource type="POOLED">
+            <property name="driver" value="${jdbc.driver}"/>
+            <property name="url" value="${jdbc.url}"/>
+            <property name="username" value="${jdbc.username}"/>
+            <property name="password" value="${jdbc.password}"/>
+        </dataSource>
+    </environment>
+</environments>
+```
+
+### 7  Mybatis的API概述 
+
+####  API介绍 
+
+#####  SqlSession工厂构建器SqlSessionFactoryBuilder 
+
+ 常用API：SqlSessionFactory build(InputStream inputStream) 
+
+通过加载mybatis的核心文件的输入流的形式构建一个SqlSessionFactory对象 
+
+```java
+String resource = "org/mybatis/builder/mybatis-config.xml";
+InputStream inputStream = Resources.getResourceAsStream(resource);
+SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+SqlSessionFactory factory = builder.build(inputStream);
+```
+
+ 其中， Resources 工具类，这个类在 org.apache.ibatis.io 包中。Resources 类帮助你从类路径下、文 件系统或一个 web URL 中加载资源文件。 
+
+#####  SqlSession工厂对象SqlSessionFactory 
+
+ SqlSessionFactory 有多个个方法创建SqlSession 实例。常用的有如下两个：  
+
+| 方法                            | 解释                                                         |
+| ------------------------------- | ------------------------------------------------------------ |
+| openSession()                   | 会默认开启一个事务，但事务不会自动提交，也就意味着需要手动提交该事务，更新操作数据才会持久化到数据库中 |
+| openSession(boolean autoCommit) | 参数为是否自动提交，如果设置为true，那么不需要手动提交事务   |
+
+#####   SqlSession会话对象 
+
+ SqlSession 实例在 MyBatis 中是非常强大的一个类。在这里你会看到所有执行语句、提交或回滚事务 和获取映射器实例的方法。 
+
+执行语句的方法主要有： 
+
+```java
+<T> T selectOne(String statement, Object parameter)
+<E> List<E> selectList(String statement, Object parameter)
+int insert(String statement, Object parameter)
+int update(String statement, Object parameter)
+int delete(String statement, Object parameter)
+
+```
+
+ 操作事务的方法主要有： 
+
+```java
+void commit()
+void rollback()
+```
+
+####  Mybatis基本原理介绍 
+
+![](./picture/day41/基本原理.png)
+
+###  8 Mybatis的dao层开发使用 
+
+####  传统开发方式 
+
+ 编写UserMapper接口 
+
+```java
+public interface UserMapper {
+	public List<User> findAll() throws Exception;
+}
+```
+
+ 编写UserMapper实现 
+
+```java
+public class UserMapperImpl implements UserMapper {
+    @Override
+        public List<User> findAll() throws Exception {
+        // 加载配置文件
+        InputStream is = Resources.getResourceAsStream("SqlMapConfig.xml");
+        // 获取SqlSessionFactory工厂对象
+        SqlSessionFactory sqlSessionFactory = new
+        SqlSessionFactoryBuilder().build(is);
+        // 获取SqlSe会话对象
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        // 执行sql
+        List<User> list = sqlSession.selectList("UserMapper.findAll");
+        // 释放资源
+        sqlSession.close();
+        return list;
+    }
+}
+
+```
+
+ 编写UserMapper.xml 
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserMapper">
+    <!--查询所有-->
+    <select id="findAll" resultType="user">
+        select * from user
+    </select>
+</mapper>
+
+```
+
+ 测试 
+
+```java
+@Test
+public void testFindAll() throws Exception {
+    // 创建UserMapper 实现类
+    UserMapper userMapper = new UserMapperImpl();
+    // 执行查询
+    List<User> list = userMapper.findAll();
+    for (User user : list) {
+        System.out.println(user);
+    }
+}
+```
+
+#### 小结
+
+ 传统开发方式 
+
+```markdown
+1. 编写UserMapper接口
+
+3. 编写UserMapper.xml
+```
+
+ 传统方式问题思考：
+
+1. 实现类中，存在mybatis模板代码重复 
+2. 实现类调用方法时，xml中的sql statement 硬编码到java代码中 
+
+思考：能否只写接口，不写实现类。只编写接口和Mapper.xml即可？ 
+
+ 因为在dao（mapper）的实现类中对sqlsession的使用方式很类似。因此mybatis提供了接口的动态代 理。  
+
+####  代理开发方式 
+
+#####  介绍 
+
+ 采用 Mybatis 的基于接口代理方式实现 持久层 的开发，这种方式是我们后面进入企业的主流。 
+
+基于接口代理方式的开发只需要程序员编写 Mapper 接口，Mybatis 框架会为我们动态生成实现类的对 象。 
+
+这种开发方式要求我们遵循一定的规范： 
+
+![](./picture/day41/规范.png)
+
+-  Mapper.xml映射文件中的namespace与mapper接口的全限定名相同 
+- Mapper接口方法名和Mapper.xml映射文件中定义的每个statement的id相同 
+- Mapper接口方法的输入参数类型和mapper.xml映射文件中定义的每个sql的parameterType的类 型相同 
+- Mapper接口方法的输出参数类型和mapper.xml映射文件中定义的每个sql的resultType的类型相 同  
+
+ Mapper 接口开发方法只需要程序员编写Mapper 接口（相当于Dao 接口），由Mybatis 框架根据接口 定义创建接口的动态代理对象，代理对象的方法体同上边Dao接口实现类方法。 
+
+#####  编写UserMapper接口 
+
+```java
+public interface UserMapper {
+    public List<User> findAll() throws Exception;
+}
+```
+
+#####  编写UserMapper.xml 
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lagou.mapper.UserMapper">
+    <!--查询所有-->
+    <select id="findAll" resultType="user">
+        select * from user
+    </select>
+</mapper>
+```
+
+#####  测试 
+
+```java
+@Test
+public void testFindAll() throws Exception {
+    // 加载核心配置文件
+    InputStream is = Resources.getResourceAsStream("SqlMapConfig.xml");
+    // 获得SqlSessionFactory工厂对象
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);
+    // 获得SqlSession会话对象
+    SqlSession sqlSession = sqlSessionFactory.openSession();
+    // 获得Mapper代理对象
+    UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+    // 执行查询
+    List<User> list = userMapper.findAll();
+    for (User user : list) {
+    System.out.println(user);
+    }
+    // 释放资源
+    sqlSession.close();
+}
+```
+
+#####  Mybatis基于接口代理方式的内部执行原理 
+
+ 我们的持久层现在只有一个接口，而接口是不实际干活的，那么是谁在做查询的实际工作呢？ 
+
+**下面通过追踪源码看一下：**
+
+1. 通过追踪源码我们会发现，我们使用的mapper实际上是一个代理对象,是由MapperProxy代理产生 的。  ![](./picture/day41/源码追踪1.png)
+2.  追踪MapperProxy的invoke方法会发现，其最终调用了mapperMethod.execute(sqlSession, args) ![](./picture/day41/源码追踪2.png)
+3.  进入execute方法会发现，最终工作的还是sqlSession ![](./picture/day41/源码追踪3.png)
