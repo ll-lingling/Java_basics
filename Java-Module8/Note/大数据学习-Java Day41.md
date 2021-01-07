@@ -46,6 +46,8 @@
 
 以企业中最常用的组合为准来学习Spring + Spring MVC + mybatis（SSM） 
 
+过气框架SSH：struts2 + spring + hibernate
+
 ### 2  Mybatis简介 
 
 ####  原始jdbc操作 
@@ -163,20 +165,20 @@ insert into `user`(`id`,`username`,`birthday`,`sex`,`address`) values (1,'子
         <maven.compiler.source>1.11</maven.compiler.source>
         <maven.compiler.target>1.11</maven.compiler.target>
     </properties>
-    <!--mybatis坐标-->
+    <!--引入mybatis坐标-->
     <dependency>
         <groupId>org.mybatis</groupId>
         <artifactId>mybatis</artifactId>
         <version>3.5.4</version>
     </dependency>
-    <!--mysql驱动坐标-->
+    <!--引入mysql驱动坐标-->
     <dependency>
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
         <version>5.1.6</version>
         <scope>runtime</scope>
     </dependency>
-    <!--单元测试坐标-->
+    <!--引入junit 单元测试坐标 -->
     <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -205,8 +207,11 @@ public class User {
 <!DOCTYPE mapper
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace：命名空间：与id属性共同构成唯一标识 -->
 <mapper namespace="UserMapper">
-    <!--查询所有-->
+    <!--查询所有
+		resultType：返回结果类型（自动映射封装）：要封装的实体的全路径
+	-->
     <select id="findAll" resultType="com.lagou.domain.User">
         select * from user
     </select>
@@ -221,13 +226,16 @@ public class User {
     PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <!--环境配置-->
+    <!--
+		环境配置
+		environments：运行环境
+	-->
     <environments default="mysql">
         <!--使用MySQL环境-->
         <environment id="mysql">
-            <!--使用JDBC类型事务管理器-->
+            <!--当前使用JDBC类型事务管理器JDBC-->
             <transactionManager type="JDBC"></transactionManager>
-            <!--使用连接池-->
+            <!--数据源信息 POOLED：使用mybatis的连接池 -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver">
                 </property>
@@ -256,7 +264,7 @@ public void testFindAll()throws Exception{
     SqlSessionFactory sqlSessionFactory=new SqlSessionFactoryBuilder().build(is);
     // 获取SqlSession会话对象
     SqlSession sqlSession=sqlSessionFactory.openSession();
-    // 执行sql
+    // 执行sql 参数statementid：namespace.id
     List<User> list=sqlSession.selectList("UserMapper.findAll");
     for(User user:list){
         System.out.println(user);
@@ -277,10 +285,13 @@ public void testFindAll()throws Exception{
 编写映射文件UserMapper.xml 
 
 ```xml
-<!--新增-->
+<!--
+    新增
+    parameterType：指定接收到的参数类型
+-->
 <insert id="save" parameterType="com.lagou.domain.User">
-    insert into user(username,birthday,sex,address)
-        values(#{username},#{birthday},#{sex},#{address})
+    <!--#{}：mybatis中的占位符，等同于JDBC中的?-->
+    insert into user(username,birthday,sex,address) values(#{username},#{birthday},#{sex},#{address})
 </insert>
 ```
 
@@ -289,12 +300,14 @@ public void testFindAll()throws Exception{
 ```java
 @Test
 public void testSave() throws Exception {
+    
     // 加载核心配置文件
     InputStream is = Resources.getResourceAsStream("SqlMapConfig.xml");
     // 获取SqlSessionFactory工厂对象
     SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);
     // 获取SqlSession会话对象
     SqlSession sqlSession = sqlSessionFactory.openSession();
+    
     // 执行sql
     User user = new User();
     user.setUsername("jack");
@@ -302,6 +315,7 @@ public void testSave() throws Exception {
     user.setSex("男");
     user.setAddress("北京海淀");
     sqlSession.insert("UserMapper.save", user);
+    
     // DML语句，手动提交事务
     sqlSession.commit();
     // 释放资源
@@ -496,11 +510,18 @@ jdbc.password=root
 
  类型别名是为 Java 类型设置一个短的名字。 
 
-为了简化映射文件 Java 类型设置，mybatis框架为我们设置好的一些常用的类型的别名： 
+为了简化映射文件 Java 类型设置，mybatis框架为我们设置好的一些常用的类型的别名：  
 
 ![](./picture/day41/typeAliases标签.png)
 
- 配置typeAliases，为com.lagou.domain.User定义别名为user： 
+```xml
+<typeAliases>
+	<!-- 方式一 配置typeAliases，为com.lagou.domain.User单个实体定义别名为user： -->
+    <typeAliases type="com.lagou.domain.User" alias="user"></typeAliases>
+    <!-- 方式二 批量起别名 别名就是类名，且不区分大小写 -->
+	<package name="com.lagou.domain"/>
+</typeAliases>
+```
 
 #####  mappers标签 
 
@@ -572,8 +593,11 @@ environments标签：数据源环境配置
 
 ```java
 String resource = "org/mybatis/builder/mybatis-config.xml";
+
 InputStream inputStream = Resources.getResourceAsStream(resource);
+
 SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
+
 SqlSessionFactory factory = builder.build(inputStream);
 ```
 
@@ -613,6 +637,8 @@ void rollback()
 ####  Mybatis基本原理介绍 
 
 ![](./picture/day41/基本原理.png)
+
+![](./picture/day41/基本原理1.png)
 
 ###  8 Mybatis的dao层开发使用 
 
@@ -703,7 +729,7 @@ public void testFindAll() throws Exception {
 
 #####  介绍 
 
- 采用 Mybatis 的基于接口代理方式实现 持久层 的开发，这种方式是我们后面进入企业的主流。 
+ 采用 Mybatis 的基于接口代理方式实现 持久层 的开发，这种方式是企业的主流。 
 
 基于接口代理方式的开发只需要程序员编写 Mapper 接口，Mybatis 框架会为我们动态生成实现类的对 象。 
 
@@ -711,7 +737,7 @@ public void testFindAll() throws Exception {
 
 ![](./picture/day41/规范.png)
 
--  Mapper.xml映射文件中的namespace与mapper接口的全限定名相同 
+-  Mapper.xml映射文件中的namespace与mapper接口的**全限定名相同** 
 - Mapper接口方法名和Mapper.xml映射文件中定义的每个statement的id相同 
 - Mapper接口方法的输入参数类型和mapper.xml映射文件中定义的每个sql的parameterType的类 型相同 
 - Mapper接口方法的输出参数类型和mapper.xml映射文件中定义的每个sql的resultType的类型相 同  
@@ -753,6 +779,7 @@ public void testFindAll() throws Exception {
     // 获得SqlSession会话对象
     SqlSession sqlSession = sqlSessionFactory.openSession();
     // 获得Mapper代理对象
+    // 当前返回的是基于userMapper所产生的代理对象：底层 JDK动态代理 实际类型 proxy
     UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
     // 执行查询
     List<User> list = userMapper.findAll();
