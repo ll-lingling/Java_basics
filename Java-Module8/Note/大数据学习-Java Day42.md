@@ -203,6 +203,7 @@ public interface UserMapper {
 ```xml
 <mapper namespace="com.lagou.mapper.UserMapper">
     <select id="findByUsername1" parameterType="string" resultType="user">
+        <!--#{}在mybaits中是占位符，引用参数值的时候回自动添加单引号-->
         select * from user where username like #{username}
     </select>
 </mapper>
@@ -236,7 +237,10 @@ public interface UserMapper {
 
 ```xml
 <mapper namespace="com.lagou.mapper.UserMapper">
-    <!--不推荐使用，因为会出现sql注入问题-->
+    <!--parameterType是基本数据类型或string的时候,${}里面只能写value
+		${} 是原生sql拼接，不会添加任何
+		不推荐使用，因为会出现sql注入问题
+	-->
     <select id="findByUsername2" parameterType="string" resultType="user">
         select * from user where username like '${value}'
     </select>
@@ -373,6 +377,7 @@ public List<User> findByIdAndUsernameIf(User user);
     <select id="findByIdAndUsernameIf" parameterType="user" resultType="user">
         SELECT * FROM `user`
         <where>
+            <!--test中填写的是表达式-->
             <if test="id != null">
                 AND id = #{id}
             </if>
@@ -463,7 +468,7 @@ public void testUpdateIf()throws Exception{
 
 ```markdown
 * <foreach>标签用于遍历集合，它的属性：
-    • collection：代表要遍历的集合元素
+    • collection：代表要遍历的集合元素,
     • open：代表语句的开始部分
     • close：代表结束部分
     • item：代表遍历集合的每个元素，生成的变量名
@@ -481,12 +486,13 @@ public List<User> findByList(List<Integer> ids);
  **UserMaper.xml映射**  
 
 ```xml
-    <!--
-    如果查询条件为普通类型 List集合，collection属性值为：collection 或者 list
-    -->
+
     <select id="findByList" parameterType="list" resultType="user" >
         SELECT * FROM `user`
         <where>
+            <!--
+                如果查询条件为普通类型 List集合，collection：通常写collection 或者 list
+            -->
             <foreach collection="collection" open="id in(" close=")" item="id" separator=",">
                 #{id}
             </foreach>
@@ -629,7 +635,7 @@ public void testFindByArray() throws Exception {
    ```xml
    <!-- 分页助手的插件 -->
    <plugin interceptor="com.github.pagehelper.PageHelper">
-       <!-- 指定方言 -->
+       <!-- value指定数据库 -->
        <property name="dialect" value="mysql"/>
    </plugin>
    
@@ -668,7 +674,14 @@ System.out.println("是否最后一页："+pageInfo.isIsLastPage());
 
 ```
 
+#### 小结
 
+ MyBatis核心配置文件常用标签：
+
+1. properties标签：该标签可以加载外部的properties文件 
+2. typeAliases标签：设置类型别名 
+3. environments标签：数据源环境配置标签 
+4. plugins标签：配置MyBatis的插件 
 
 ###  4 Mybatis多表查询 
 
@@ -796,7 +809,7 @@ SELECT * FROM orders o LEFT JOIN USER u ON o.`uid`=u.`id`;
 
    
 
-3.  **OrderMapper.xml映射** 
+3. **OrderMapper.xml映射** 
 
    ```xml
       <resultMap id="orderMap" type="com.lagou.domain.Order">
@@ -804,9 +817,9 @@ SELECT * FROM orders o LEFT JOIN USER u ON o.`uid`=u.`id`;
            <result column="ordertime" property="ordertime"></result>
            <result column="money" property="money"></result>
            <!--
-           一对一（多对一）使用association标签关联
-           property="user" 封装实体的属性名
-           javaType="user" 封装实体的属性类型
+               association：一对一（多对一）使用association标签关联
+               property="user" 要封装实体的属性名
+               javaType="user" 要封装实体的属性类型
            -->
            <association property="user" javaType="com.lagou.domain.User">
                <id column="uid" property="id"></id>
@@ -816,6 +829,7 @@ SELECT * FROM orders o LEFT JOIN USER u ON o.`uid`=u.`id`;
                <result column="address" property="address"></result>
            </association>
        </resultMap>
+   	
    ```
 
    
@@ -890,9 +904,9 @@ SELECT *,o.id oid FROM USER u LEFT JOIN orders o ON u.`id` = o.`uid`;
            <result column="sex" property="sex"></result>
            <result column="address" property="address"></result>
            <!--
-           一对多使用collection标签关联
-           property="orderList" 封装到集合的属性名
-           ofType="order" 封装集合的泛型类型
+           	collection:一对多使用collection标签关联
+           	property="orderList" 封装到集合的属性名
+           	ofType="order" 封装集合的泛型类型
            -->
            <collection property="orderList" ofType="com.lagou.domain.Order">
                <id column="oid" property="id"></id>
@@ -1085,7 +1099,7 @@ SELECT * FROM `user` WHERE id = #{订单的uid};
 
    
 
-2.  OrderMapper.xml映射 
+2. OrderMapper.xml映射 
 
    ```xml
    <!--一对一嵌套查询-->
@@ -1093,9 +1107,11 @@ SELECT * FROM `user` WHERE id = #{订单的uid};
        <id column="id" property="id"></id>
        <result column="ordertime" property="ordertime"></result>
        <result column="money" property="money"></result>
-       <!--根据订单中uid外键，查询用户表-->
-       <association property="user" javaType="user" column="uid"
-     select="com.lagou.mapper.UserMapper.findById"></association>
+       <!--根据订单中uid外键，查询用户表
+   		uid : 嵌套查询要传递的值
+   		select： 定位到sql语句
+   	-->
+       <association property="user" javaType="user" column="uid" 						select="com.lagou.mapper.UserMapper.findById"></association>
    </resultMap>
    <select id="findAllWithUser" resultMap="orderMap" >
        SELECT * FROM orders

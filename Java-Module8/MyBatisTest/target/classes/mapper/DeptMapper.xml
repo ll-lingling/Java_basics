@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lagou.mapper.DeptMapper">
+
+<!--    <select id="findAll" resultType="com.lagou.domain.Department">-->
+<!--        select * from dept-->
+<!--    </select>-->
+
+    <select id="findAll" resultMap="deptResultMap">
+        select * from dept
+    </select>
+
+    <select id="findById" parameterType="int" resultMap="deptResultMap">
+        select * from dept where dept_id = #{id}
+    </select>
+
+    <resultMap id="deptResultMap" type="com.lagou.domain.Department">
+        <id column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="major_name" property="majorName"/>
+        <result column="telephone" property="telephone"/>
+        <result column="email" property="email"/>
+    </resultMap>
+
+
+</mapper>

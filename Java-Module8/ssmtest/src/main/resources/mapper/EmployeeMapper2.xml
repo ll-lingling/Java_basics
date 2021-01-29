@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lagou.dao.EmployeeDao">
+
+    <resultMap id="employeeResultMap" type="employee">
+        <id property="id" column="emp_id"/>
+        <result property="empName" column="emp_name"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="jobName" column="job_name"/>
+        <result property="joinDate" column="join_date"/>
+        <result property="telephone" column="telephone"/>
+    </resultMap>
+
+
+    <!--require all employee-->
+    <select id="findAllEmployee" resultMap="employeeResultMap">
+        select * from employee
+    </select>
+
+
+    <!--add employee-->
+    <insert id="addEmployee" parameterType="employee">
+        INSERT INTO employee VALUES(NULL,#{empName},#{deptId},#{jobName},#{telephone},#{joinDate});
+    </insert>
+
+    <!--批量删除 void deleteBatch(Integer[] ids);  id in(1,2)-->
+    <delete id="deleteEmployeeById" parameterType="int">
+        delete from employee where
+            <foreach collection="array" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+    </delete>
+
+</mapper>

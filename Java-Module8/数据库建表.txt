@@ -1,0 +1,38 @@
+create database db1;
+alter database db1 character set utf8;
+use db1;
+
+#部门（部门号，部门名，部门主管，联系电话，邮箱）
+create table dept(
+
+    dept_id int primary key auto_increment,
+    dept_name varchar(20),
+    major_name varchar(20),
+    telephone varchar(20),
+    email varchar(50)
+);
+
+# 员工（员工号，姓名，部门号，职位，入职时间，联系方式）
+create table employee (
+    emp_id int primary key auto_increment,
+    emp_name varchar(10),
+    dept_id int,
+    job_name varchar(20),
+    telephone varchar(20),
+    join_date date,
+    foreign key (dept_id) references dept(dept_id)
+);
+
+
+show tables;
+
+select * from dept;
+select * from employee;
+
+# 插入数据
+INSERT INTO dept (dept_name,major_name,telephone ,email ) VALUES ('市场部','拉勾招聘','400-400-4008','lagou@163.com');
+INSERT INTO dept (dept_name,major_name,telephone ,email ) VALUES ('销售部','拉勾招聘','400-400-4002','laggou@163.com');
+
+INSERT INTO employee(emp_name,dept_id,job_name,join_date,telephone) VALUES('小王',1,'客户经理','2020-06-06','13212345678');
+INSERT INTO employee(emp_name,dept_id,job_name,join_date,telephone) VALUES('老于',1,'客户经理','2019-04-27','13512345679');
+INSERT INTO employee(emp_name,dept_id,job_name,join_date,telephone) VALUES('老方',2,'销售经理','2020-06-06','13512345670');
