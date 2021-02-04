@@ -1,0 +1,189 @@
+二、SQL编程题（总分40分）    要求：提交效果截图或演示视频到码云  
+
+1、题目一
+
+有如下三张数据表
+
+学生表：student(studentNo,studentName,age,sex)
+
+课程表：course(courseNo,courseName,tearcher)
+
+学生得分表：student_course(studentNo,courseNo,grade)
+
+编写SQL语句，完成如下需求
+
+1）查询有课程大于80分又有课程低于60分的学生的学号（5分）
+
+SELECT 
+	DISTINCT sc.studentNo
+FROM student_course sc
+INNER JOIN
+	(SELECT
+		sc.studentNo,
+		sc.grade
+	FROM student_course sc
+	WHERE sc.grade < 60) sc_60
+WHERE sc.studentNo = sc_60.studentNo
+AND sc.grade > 80；
+
+2) 查询各门课程去掉一个最高分和最低分后的平均成绩（5分）
+
+SELECT courseName,(sum(grade)-max(grade)-min(grade))/(count(grade)-2) as avg_grade
+FROM student_course sc 
+left JOIN course c
+on c.courseNo = sc.courseNo
+group by sc.courseNo
+
+
+2、题目二
+
+表a
++----+
+
+| userid |
+
++----+
+
+| 111 |
+
+| 222 |
+
+| 333 |
+
+| 777 |
+
++----+
+
+ 
+
+表b
++----+
+
+| userid |
+
++----+
+
+| 111 |
+
+| 444 |
+
+| 333 |
+
++----+
+
+
+(1)查找a、b表中都有的userid
+SELECT
+	a.userid
+FROM table_a a
+INNER JOIN table_b b
+ON a.userid = b.userid;
+
+(2)查找a中有而b中没有的userid
+SELECT a.`userid`
+FROM (SELECT
+		a.`userid` ,b.`userid` AS bu
+	FROM table_a a
+	LEFT JOIN table_b b
+	ON a.userid = b.userid)a
+WHERE bu IS NULL
+
+
+
+3、题目三
+
+编写一个 SQL 查询，查找 Person 表中所有重复的电子邮箱（10分）。
+
+示例：
+
++----+---------+
+
+| Id | Email   |
+
++----+---------+
+
+| 1  | a@b.com |
+
+| 2  | c@d.com |
+
+| 3  | a@b.com |
+
++----+---------+
+
+根据以上输入，你的查询应返回以下结果：
+
++---------+
+
+| Email   |
+
++---------+
+
+| a@b.com |
+
++---------+
+
+说明：所有电子邮箱都是小写字母。
+
+
+-- 创建Person表
+CREATE TABLE Person (
+	Id INT PRIMARY KEY AUTO_INCREMENT,
+	Email VARCHAR(32)
+)
+INSERT INTO Person (Email) VALUES('a@a.com');
+INSERT INTO Person (Email) VALUES('b@b.com');
+INSERT INTO Person (Email) VALUES('a@a.com');
+
+SELECT
+	Email
+FROM Person
+GROUP BY Email
+HAVING COUNT(Email) > 1
+
+
+4、题目四
+
+编写一个 SQL 查询，获取 Employee 表中第二高的薪水（Salary）（10分） 。
+
++----+--------+
+
+| Id | Salary |
+
++----+--------+
+
+| 1  | 100    |
+
+| 2  | 200    |
+
+| 3  | 300    |
+
++----+--------+
+
+例如上述 Employee 表，SQL查询应该返回 200 作为第二高的薪水。如果不存在第二高的薪水，那么查询应返回 null。
+
++---------------------+
+
+| SecondHighestSalary |
+
++---------------------+
+
+| 200                 |
+
++---------------------+
+
+
+-- 创建 Employee表
+CREATE TABLE Employee (
+	Id INT PRIMARY KEY AUTO_INCREMENT,
+	Salary INT
+)
+INSERT INTO Employee (Salary) VALUES(100);
+INSERT INTO Employee (Salary) VALUES(200);
+INSERT INTO Employee (Salary) VALUES(300);
+
+-- 获取Employee 表中第二高的薪水
+SELECT 
+	Salary SecondHighestSalary
+FROM Employee
+ORDER BY Salary DESC
+LIMIT 1,1

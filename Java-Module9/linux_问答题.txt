@@ -1,0 +1,46 @@
+一、简答题
+
+1.使用top查看系统资源占用情况时，哪一列表示内存占用呢？
+
+ PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND                                                
+11746 root      20   0 2656360 176816  22728 S  0.3  9.8  27:59.44 java                                                   
+    1 root      20   0  125500   4004   2620 S  0.0  0.2   0:14.28 systemd                                                
+    2 root      20   0       0      0      0 S  0.0  0.0   0:00.00 kthreadd                                               
+    4 root       0 -20       0      0      0 S  0.0  0.0   0:00.00 kworker/0:0H                                           
+    6 root      20   0       0      0      0 S  0.0  0.0   0:08.55 ksoftirqd/0
+
+VIRT虚拟内存用量
+RES物理内存用量
+SHR共享内存用量
+%MEM内存用量
+
+2.如果知道一个文件名称，怎么查这个文件在linux下的哪个目录，如：要查找tnsnames.ora文件
+
+find / -name tnsnames.ora
+locate tnsnames.ora 
+
+
+二、编码题
+
+题目要求:
+
+一个张xxx.sql表的大小为156M, 需要用拆分表的工具将表拆分为1024KB的多个文件,请编写shell脚本执行这些sql文件,完成表的创建和数据的插入。 
+
+PS： 我们提SQL文件 position_type_info_v2.sql  ;  提供拆分表的工具SQLDumpSplitter.exe
+
+
+答：
+使用拆表工具拆出数据结构表和普通数据表，
+脚本执行数据结构表完成建表
+在使用循环插入数据表
+------------------------------------------------	   
+#!/bin/sh
+
+mysql -root -p12345678 visualization</usr/position_type_info_v2_DataStructure.sql
+
+ls /usr/data | while read line
+do
+mysql -uroot -12345678 visualization</usr/data/$line
+echo "导入 $line 完成..."
+done
+--------------------------------------------------
