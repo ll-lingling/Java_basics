@@ -1,158 +1,193 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <meta charset="UTF-8">
-    <title>添加学生信息</title>
-    <!--    导入jquery和vue包-->
-    <script src="resourcejs/jquery-3.5.1.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <!--    配置界面样式-->
-    <style>
-        body {
-            padding: 0;
-            margin: 0;
-        }
-        
-        #top {
-            width: 100%;
-            height: 500px;
-            background-color: lightseagreen;
-        }
-        
-        #content {
-            height: 500px;
-            width: 700px;
-            border: dimgray 1px solid;
-            background-color: white;
-            float: left;
-            margin-left: 30%;
-            margin-top: 200px;
-        }
-        
-        .tx {
-            height: 30px;
-            width: 300px;
-            margin-left: 30px;
-        }
-        
-        #name {
-            margin-left: 140px;
-            margin-top: 60px;
-        }
-        
-        #password {
-            margin-left: 156px;
-            margin-top: 40px;
-        }
-        
-        #birthday {
-            margin-left: 125px;
-            margin-top: 40px;
-        }
-        
-        #sex {
-            margin-left: 156px;
-            margin-top: 40px;
-        }
-        
-        #but {
-            margin-left: 260px;
-            margin-top: 40px;
-        }
-        
-        #login {
-            width: 200px;
-            height: 40px;
-            background-color: darkseagreen;
-        }
-        
-        #reg {
-            margin-left: 20px;
-            width: 200px;
-            height: 40px;
-            background-color: dodgerblue;
-        }
-        
-        p {
-            color: red;
-            margin-left: 150px;
-        }
-    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>司法行政一体化智能平台</title>
+    <link href="lib/angelui/resources/css/module.css" type="text/css" rel="stylesheet">
+    <link href="lib/angelui/resources/css/loading-bar.min.css" type="text/css" rel="stylesheet">
+    <link href="lib/angelui/resources/css/angelui.css" type="text/css" rel="stylesheet">
+    <link href="lib/angelui/vendor/jquery-plugins/select2/select2.css" type="text/css" rel="stylesheet">
+    <link href="lib/angelui/resources/icheck/all.css" type="text/css" rel="stylesheet">
+    <link href="lib/angelui/resources/jquery-ui/jquery-ui-1.10.3.custom.min.css" type="text/css" rel="stylesheet">
+    <link href="lib/angelui/resources/ztree/zTreeStyle/zTreeStyle.css" type="text/css" rel="stylesheet">
+    <link href="lib/angelui/resources/toastmesage/css/jquery.toastmessage.css" type="text/css" rel="stylesheet">
+
+    <link href="resources/css/base3.css" rel="stylesheet" type="text/css" />
+    <link href="resources/css/base.css" rel="stylesheet" type="text/css" />
+    <link href="resources/css/base_yao2.css" rel="stylesheet" type="text/css" />
+    <link href="resources/css/base2.css" rel="stylesheet" type="text/css" />
+
+    <link href="resources/css/patch.css" type="text/css" rel="stylesheet">
+    <link href="resources/css/child.css" type="text/css" rel="stylesheet">
+    <link href="resources/css/gongz.css" type="text/css" rel="stylesheet">
+    <link href="resources/css/jzy-base.css" type="text/css" rel="stylesheet">
+    <link href="resources/css/trim.css" type="text/css" rel="stylesheet">
+    <link href="resources/css/Glyphicons.min.css" type="text/css" rel="stylesheet">
+
+    <link rel="stylesheet" href="resources/css/layout/reset.css" type="text/css">
+    <link rel="stylesheet" href="resources/css/layout/base.css" type="text/css">
+    <link rel="stylesheet" href="resources/plugins/jquery.mCustomScrollbar.css" type="text/css">
+    <link rel="stylesheet" href="resources/css/master_lg.css" type="text/css">
+    <link rel="stylesheet" href="resources/css/master_lj.css" type="text/css">
+    <link rel="stylesheet" href="resources/css/master_zzy.css" type="text/css">
+
+    <link href="resources/css/debug.css" type="text/css" rel="stylesheet">
+    <!--[if IE]>
+<script>
+var console = {
+    log: function (msg) {
+        //do nothing
+    }
+};
+document.namespaces;
+</script>
+<![endif]-->
+    <script type="text/javascript" src="config.js?v=20170117"></script>
+    <script type="text/javascript" src="lib/angelui/vendor/require.js" data-main="lib/angelui/main.js?v=20210317"></script>
+
+    <script type="text/javascript" src="lib/angelui/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="resources/plugins/placeholder.js"></script>
+    <script type="text/javascript" src="lib/angelui/js/master.js"></script>
 </head>
+<style>
+    [ng-cloak] {
+        display: none !important;
+    }
+    /* 给飘窗添加一些基础样式，如宽度，高度和背景颜色等等 */
+    
+    .outwin {
+        width: 440px;
+        height: 100px;
+        background: #fff;
+        margin: 50px 50px;
+        border: 1px solid #ddded9;
+        box-shadow: 0px 0px 10px #c6c6c6;
+        padding-right: 10px;
+    }
+    
+    .outwin dt {
+        float: left;
+        height: 99px;
+        width: 99px;
+        background: url(resources/images/icon-warning.png) center center no-repeat;
+    }
+    
+    .outwin dd {
+        margin-left: 100px;
+        height: 90px;
+        padding-top: 10px;
+        font-size: 16px;
+        line-height: 34px;
+    }
+    
+    .outwin span.grea {
+        color: #555555;
+        font-size: 24px;
+    }
+    
+    .outwin span.red {
+        color: #da043c;
+        font-size: 30px;
+    }
+</style>
 
-<body>
-    <div id="content">
+<body id="ng-app" ng-controller="indexCtrl" style="overflow-x: hidden;">
+    <!--topbar-->
+    <div class="topHead"><img ng-cloak ng-src="{{currentPicPath}}" width="530" height="81" />
+        <!--一级导航-->
+        <div class="rPlace" ng-cloak ng-mouseleave="hideSubTools()">
+            <ul class="topNav" style="margin-right: 15px;">
+                <li ng-class="currentFun.func_name == fun.func_name?'selected':''" ng-repeat="fun in funs" style="width: 60px;">
+                    <a href="#" ng-click="menuClick(fun,1)">
+                        <img ng-src="{{fun.imageUrl}}" />
+                        <span style="display:block;">{{fun.func_name}}</span>
+                    </a>
+                </li>
+            </ul>
+            <!--用户显示-->
+            <div class="loginPeople" ng-mouseover="showSubTools()" style="cursor: pointer;">
+                <span class="LB_l"></span>
+                <span class="LB_m">
+        <img src="resources/images/loginUserIcon.png" align="absmiddle"/>
+        <span ng-bind="currentUser.lawofficename==undefined?currentUser.username:currentUser.lawofficename"></span>
+                </span>
+                <span class="LB_r"></span>
+            </div>
+            <!--密码设置-->
+            <ul class="loginBox-pab" ng-show="showConfig">
+                <div class="topd"></div>
+                <li>
+                    <img src="resources/images/stringsm1.png">
+                    <a href="javascript:void(0);" ng-click="showModel('password');showConfig=false;" style="font-size: 14px;">修改密码</a>
+                </li>
+                <!--<li>-->
+                <!--<img src="resources/images/stringsm2.png"> <a href="download/downloadManual">帮助</a>-->
+                <!--</li>-->
+                <li class="notb">
+                    <img src="resources/images/stringsm3.png">
+                    <a ng-click="loginOut()" href="javascript:void(0);" style="font-size: 14px;">退出系统</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--topbar end-->
 
-        <div id="name">
-            用户名 <input class="tx" type="text" name="name" placeholder="请输入用户名" v-model="name" @blur="isEmpty" />
+    <!--左侧导航 left-nav-->
+    <ul class="left-nav" ng-class="showLeftMenu == true?'showSecNav':''">
+        <li class="title">导航</li>
+        <!--二级导航-->
+        <li class="cont-choise" ng-repeat="secondMenu in currentFun.children">
+            <a href="#" ng-click="menuClick(secondMenu,2)" ng-cloak>
+                <img src="resources/images/icon-img/leftNav01.png" />{{secondMenu.func_name}}
+            </a>
+            <dl>
+                <dd ng-if="currSecondFun == secondMenu" ng-repeat="thirdMenu in secondMenu.children">
+                    <a href="#" ng-click="menuClick(thirdMenu,3)" ng-attr-title="{{thirdMenu.func_name}}">{{thirdMenu.func_name}}</a>
+                </dd>
+            </dl>
+        </li>
+    </ul>
+    <!--左侧导航 left-nav end-->
+
+
+    <!--中间内容 content-->
+    <div class="out-frame" ng-class="showLeftMenu == true?'showSecNav2':''">
+        <div class="frame-crumbs">
+            <img src="resources/images/curbmbg.png">
+            <span>当前位置：</span>
+            <!--<a href="#">日常办公</a> ---->
+            <span ng-cloak>{{currPosition.firstMenu}}{{currPosition.secondMenu}}{{currPosition.thirdMenu}}</span>
         </div>
 
-        <div id="password">
-            密码 <input class="tx" type="password" name="password" placeholder="请输入密码" v-model="password" @blur="isEmpty" />
+        <div class="frame-content tabContent" ng-controller="pageCtrl">
+            <div id="mainFrame" ng-include="currentApp.htmlTemplateFile" style="margin-left: 0px;width: 100%;left: 0px;">
+            </div>
         </div>
 
-        <div id="sex">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="radio" name="sex" checked="checked" v-model="sex" value=0 />男 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="radio" name="sex" v-model="sex" value=1 />女
-        </div>
-
-        <div id="birthday">
-            出生日期 <input class="tx" type="text" name="birthday" placeholder="请输入出生日期" v-model="birthday" @blur="isEmpty" />
-        </div>
-
-        <div id="but">
-            <input :disabled="flag" id="login" type="submit" value="添加" @click="add" />
+        <!--弹窗-->
+        <div class="questionnaire" id="questionnaire">
+            <div class="btn-close"></div>
+            <h2 class="queTitle">您有
+                <a href="#" style="color: red;font-size: 30px;" ng-click="toQuestionList();">{{questionTotal}}</a> 份问卷调查需要填写
+            </h2>
+            <div class="listP" ng-repeat="a in questionnaireList">
+                <p> <a href="#" style="font-size: 16px;" ng-click="toQuestion(a.pkid);">{{a.title}}</a></p>
+            </div>
         </div>
 
     </div>
-    <div id="top"></div>
+    <!--中间内容 content end-->
+    <div ng-show="loadingCount>0" class="content-loading"></div>
+    <div ng-include="'src/views/common/password.html'"></div>
+    <!-- 飘窗元素 -->
+    <div id="warningList" bind-html_compile></div>
+
 </body>
-<script>
-    // vue框架
-    new Vue({
-        el: "#content", // 挂载
-        data: { // 使用 v-model 和页面双向通讯
-            flag: true, // 添加按钮是否可点击
-            name: "", // 用户名
-            password: "", // 密码
-            sex: 0, // 性别 0男 1女
-            birthday: "" // 出生日期
-        },
-        methods: {
-            isEmpty: function() {
-                // 用来配置添加按钮的disabled属性，防止信息未输入全就添加
-                if (this.name != "" && this.password != "" && this.birthday != "") {
-                    this.flag = false;
-                } else {
-                    this.flag = true
-                }
-            },
-            // 点击添加按钮
-            add: function() {
-                var t = this; // 复制vue对象，在ajax中的this不再是vue的this
-                // post 请求服务器添加用户
-                $.post("/student_item/addStudent", { // 请求参数
-                    name: this.name,
-                    password: this.password,
-                    sex: this.sex,
-                    birthday: this.birthday
-                }, function(data) { // 响应回调函数
-                    var jsonData = JSON.parse(data); // 解析json
-                    var code = jsonData.code; // 消息类型
-                    if (code == 0) { // 判断是否添加成功
-                        alert(jsonData.msg) // 弹框
-                    } else if (code == 1) { // 添加成功，跳转列表页
-                        window.location.href = "/student_item/item.html"
-                    } else { // 未登录状态，跳转回登录页
-                        alert(jsonData.msg);
-                        window.location.href = "/student_item/index.html"
-                    }
-                })
-            }
-        }
-    })
-</script>
 
 </html>
