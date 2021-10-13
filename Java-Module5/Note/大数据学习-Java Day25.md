@@ -227,7 +227,7 @@
     - new ComboPooledDataSource("mysql"); 使用命名配置  
 
     ```java
-    public class C3P0Utils {
+    public class C3P0Utils {z
     
     //1.创建连接池对象 C3P0对DataSource接口的实现类
         //使用的配置是 配置文件中的默认配置
